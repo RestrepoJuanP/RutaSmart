@@ -1,0 +1,39 @@
+﻿{% extends "base.html" %}
+
+{% block title %}Panel Conductor | RutaSmart{% endblock title %}
+
+{% block content %}
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body p-4">
+        <h1 class="h3 mb-1">Panel de Conductor</h1>
+        <p class="text-secondary mb-0">Vista inicial para conductores registrados.</p>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <h2 class="h6">Estudiantes asignados</h2>
+                <p class="text-secondary mb-0">Próximo modulo (FR05-FR08).</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <h2 class="h6">Asistencia diaria</h2>
+                <p class="text-secondary mb-0">Próximo modulo (FR09-FR11).</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <h2 class="h6">Rutas y navegación</h2>
+                <p class="text-secondary mb-0">Próximo modulo (FR12-FR15).</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
