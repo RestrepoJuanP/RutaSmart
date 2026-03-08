@@ -20,15 +20,15 @@ def student_create(request):
             student = form.save(commit=False)
             student.owner = request.user
             student.save()
-            messages.success(request, "Student created successfully.")
+            messages.success(request, "Estudiante registrado exitosamente.")
             return redirect("student_list")
     else:
         form = StudentForm()
 
     return render(request, "students/student_form.html", {
         "form": form,
-        "title": "Register Student",
-        "button_text": "Save Student"
+        "title": "Registrar Estudiante",
+        "button_text": "Guardar Estudiante"
     })
 
 
@@ -40,15 +40,15 @@ def student_update(request, pk):
         form = StudentForm(request.POST, instance=student)
         if form.is_valid():
             form.save()
-            messages.success(request, "Student updated successfully.")
+            messages.success(request, "Estudiante actualizado exitosamente.")
             return redirect("student_list")
     else:
         form = StudentForm(instance=student)
 
     return render(request, "students/student_form.html", {
         "form": form,
-        "title": "Edit Student",
-        "button_text": "Update Student"
+        "title": "Editar Estudiante",
+        "button_text": "Actualizar Estudiante"
     })
 
 
@@ -59,7 +59,7 @@ def student_deactivate(request, pk):
     if request.method == "POST":
         student.is_active = False
         student.save()
-        messages.warning(request, "Student marked as inactive.")
+        messages.warning(request, "Estudiante marcado como inactivo.")
         return redirect("student_list")
 
     return render(request, "students/student_confirm_deactivate.html", {

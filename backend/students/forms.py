@@ -15,22 +15,22 @@ class StudentForm(forms.ModelForm):
         widgets = {
             "full_name": forms.TextInput(attrs={
                 "class": "form-control",
-                "placeholder": "Enter student's full name"
+                "placeholder": "Ingrese el nombre completo del estudiante"
             }),
             "address": forms.TextInput(attrs={
                 "class": "form-control",
-                "placeholder": "Enter student's address"
+                "placeholder": "Ingrese la dirección del estudiante"
             }),
             "guardian_name": forms.TextInput(attrs={
                 "class": "form-control",
-                "placeholder": "Enter guardian's name"
+                "placeholder": "Ingrese el nombre del tutor"
             }),
             "guardian_phone": forms.TextInput(attrs={
                 "class": "form-control",
-                "placeholder": "Enter guardian's phone number"
+                "placeholder": "Ingrese el número de teléfono del tutor"
             }),
             "guardian_email": forms.EmailInput(attrs={
                 "class": "form-control",
-                "placeholder": "Enter guardian's email (optional)"
+                "placeholder": "Ingrese el correo electrónico del tutor (opcional)"
             }),
         }
