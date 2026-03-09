@@ -64,3 +64,11 @@ El sistema muestra todos los vehículos asociados al conductor autenticado en un
 **Dado** que un usuario intenta registrar un vehículo,  
 **Cuando** el usuario no está asociado a un conductor o deja campos obligatorios sin completar,  
 **Entonces** el sistema debe mostrar un mensaje de error y no guardar la información en la base de datos.
+
+## Mejoras para próximas entregas
+
+Para futuras iteraciones del sistema se planea ampliar el módulo de gestión de vehículos con las siguientes funcionalidades:
+
+- **Actualización de vehículos:** permitir que el conductor modifique la información de un vehículo ya registrado (color, modelo, capacidad, etc.).
+- **Eliminación de vehículos:** permitir que el conductor elimine vehículos que ya no estén en uso dentro del sistema.
+- **Validaciones adicionales:** agregar validaciones más estrictas para datos como formato de placa, soat y tecnomecanica.
