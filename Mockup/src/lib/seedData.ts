@@ -11,6 +11,7 @@ import {
   saveTransaction,
   saveInvoice,
   saveNotification,
+  saveComprobante,
 } from './storage';
 
 export const seedDemoData = () => {
@@ -298,4 +299,105 @@ export const seedDemoData = () => {
 
   // Mark as seeded
   localStorage.setItem('rutasmart_demo_seeded', 'true');
+};
+
+// ── Comprobantes de pago de demostración (HU-FIN-03) ────────────────────────
+// SVG compacto que simula un recibo bancario para el mockup
+const DEMO_ARCHIVO_SVG = `data:image/svg+xml;charset=utf-8,<svg xmlns='http://www.w3.org/2000/svg' width='420' height='520'><rect width='420' height='520' fill='%23f5f5f5'/><rect x='20' y='20' width='380' height='480' fill='white' stroke='%23e0e0e0' stroke-width='1.5' rx='6'/><rect x='20' y='20' width='380' height='72' fill='%231565c0' rx='6'/><text x='210' y='64' text-anchor='middle' font-family='Arial,sans-serif' font-size='17' font-weight='bold' fill='white'>COMPROBANTE DE PAGO</text><line x1='40' y1='118' x2='380' y2='118' stroke='%23e0e0e0'/><text x='40' y='155' font-family='Arial,sans-serif' font-size='12' fill='%23757575'>Entidad financiera</text><text x='220' y='155' font-family='Arial,sans-serif' font-size='12' fill='%23212121'>Bancolombia</text><text x='40' y='188' font-family='Arial,sans-serif' font-size='12' fill='%23757575'>Beneficiario</text><text x='220' y='188' font-family='Arial,sans-serif' font-size='12' fill='%23212121'>Carlos Rodriguez</text><text x='40' y='221' font-family='Arial,sans-serif' font-size='12' fill='%23757575'>Concepto</text><text x='220' y='221' font-family='Arial,sans-serif' font-size='12' fill='%23212121'>Transporte escolar</text><text x='40' y='254' font-family='Arial,sans-serif' font-size='12' fill='%23757575'>Fecha</text><text x='220' y='254' font-family='Arial,sans-serif' font-size='12' fill='%23212121'>05/03/2026 08:32</text><text x='40' y='287' font-family='Arial,sans-serif' font-size='12' fill='%23757575'>No. transaccion</text><text x='220' y='287' font-family='Arial,sans-serif' font-size='12' fill='%23212121'>TXN-2026030500182</text><line x1='40' y1='310' x2='380' y2='310' stroke='%23e0e0e0'/><text x='40' y='338' font-family='Arial,sans-serif' font-size='12' fill='%23757575'>Valor pagado</text><text x='220' y='338' font-family='Arial,sans-serif' font-size='18' font-weight='bold' fill='%231565c0'>$ 200.000</text><line x1='40' y1='366' x2='380' y2='366' stroke='%23e0e0e0'/><text x='210' y='400' text-anchor='middle' font-family='Arial,sans-serif' font-size='11' fill='%239e9e9e'>Transaccion exitosa</text><text x='210' y='420' text-anchor='middle' font-family='Arial,sans-serif' font-size='10' fill='%23bdbdbd'>Este comprobante es valido como soporte de pago</text></svg>`;
+
+export const seedComprobantes = () => {
+  if (localStorage.getItem('rutasmart_comprobantes_seeded') === 'true') {
+    return;
+  }
+
+  const conductorId = 'demo-conductor-1';
+  const currentMonth = new Date().toISOString().slice(0, 7);
+  const prevMonth = (() => {
+    const d = new Date();
+    d.setMonth(d.getMonth() - 1);
+    return d.toISOString().slice(0, 7);
+  })();
+
+  saveComprobante({
+    id: 'comp-1',
+    conductorId,
+    studentId: 'student-1',
+    acudienteNombre: 'María González',
+    estudianteNombre: 'Sofía González',
+    mesPago: currentMonth,
+    referenciaFactura: 'INV-2026-03-001',
+    archivoUrl: DEMO_ARCHIVO_SVG,
+    archivoNombre: 'comprobante_sofia_marzo2026.svg',
+    monto: 200000,
+    estado: 'pendiente',
+    fechaSubida: new Date().toISOString(),
+  });
+
+  saveComprobante({
+    id: 'comp-2',
+    conductorId,
+    studentId: 'student-2',
+    acudienteNombre: 'Pedro Martínez',
+    estudianteNombre: 'Juan Martínez',
+    mesPago: currentMonth,
+    referenciaFactura: 'INV-2026-03-002',
+    archivoUrl: DEMO_ARCHIVO_SVG,
+    archivoNombre: 'comprobante_juan_marzo2026.svg',
+    monto: 200000,
+    estado: 'pendiente',
+    fechaSubida: new Date(Date.now() - 3600_000).toISOString(),
+  });
+
+  saveComprobante({
+    id: 'comp-3',
+    conductorId,
+    studentId: 'student-3',
+    acudienteNombre: 'Laura Torres',
+    estudianteNombre: 'Ana Torres',
+    mesPago: currentMonth,
+    referenciaFactura: 'INV-2026-03-003',
+    archivoUrl: DEMO_ARCHIVO_SVG,
+    archivoNombre: 'comprobante_ana_marzo2026.svg',
+    monto: 200000,
+    estado: 'rechazado',
+    comentarioValidacion: 'El valor del comprobante no coincide con la tarifa mensual.',
+    fechaSubida: new Date(Date.now() - 86400_000).toISOString(),
+    fechaValidacion: new Date(Date.now() - 43200_000).toISOString(),
+  });
+
+  saveComprobante({
+    id: 'comp-4',
+    conductorId,
+    studentId: 'student-1',
+    acudienteNombre: 'María González',
+    estudianteNombre: 'Sofía González',
+    mesPago: prevMonth,
+    referenciaFactura: 'INV-2026-02-001',
+    archivoUrl: DEMO_ARCHIVO_SVG,
+    archivoNombre: 'comprobante_sofia_febrero2026.svg',
+    monto: 200000,
+    estado: 'aprobado',
+    comentarioValidacion: 'Pago recibido correctamente.',
+    fechaSubida: new Date('2026-02-03T09:00:00.000Z').toISOString(),
+    fechaValidacion: new Date('2026-02-04T10:30:00.000Z').toISOString(),
+  });
+
+  saveComprobante({
+    id: 'comp-5',
+    conductorId,
+    studentId: 'student-2',
+    acudienteNombre: 'Pedro Martínez',
+    estudianteNombre: 'Juan Martínez',
+    mesPago: prevMonth,
+    referenciaFactura: 'INV-2026-02-002',
+    archivoUrl: DEMO_ARCHIVO_SVG,
+    archivoNombre: 'comprobante_juan_febrero2026.svg',
+    monto: 200000,
+    estado: 'aprobado',
+    comentarioValidacion: 'Confirmado.',
+    fechaSubida: new Date('2026-02-04T08:15:00.000Z').toISOString(),
+    fechaValidacion: new Date('2026-02-04T14:00:00.000Z').toISOString(),
+  });
+
+  localStorage.setItem('rutasmart_comprobantes_seeded', 'true');
 };

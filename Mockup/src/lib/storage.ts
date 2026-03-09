@@ -11,6 +11,8 @@ import {
   Transaction,
   Invoice,
   Notification,
+  ComprobantePago,
+  EstadoComprobante,
 } from './types';
 
 const STORAGE_KEYS = {
@@ -25,6 +27,7 @@ const STORAGE_KEYS = {
   TRANSACTIONS: 'rutasmart_transactions',
   INVOICES: 'rutasmart_invoices',
   NOTIFICATIONS: 'rutasmart_notifications',
+  COMPROBANTES: 'rutasmart_comprobantes',
 };
 
 // Usuario actual
@@ -334,4 +337,49 @@ export const markAllNotificationsAsRead = (userId: string) => {
     }
   });
   localStorage.setItem(STORAGE_KEYS.NOTIFICATIONS, JSON.stringify(notifications));
+};
+
+// Comprobantes de pago (HU-FIN-03)
+export const getComprobantes = (): ComprobantePago[] => {
+  const data = localStorage.getItem(STORAGE_KEYS.COMPROBANTES);
+  return data ? JSON.parse(data) : [];
+};
+
+export const getConductorComprobantes = (
+  conductorId: string,
+  mes?: string
+): ComprobantePago[] => {
+  let list = getComprobantes().filter(c => c.conductorId === conductorId);
+  if (mes) {
+    list = list.filter(c => c.mesPago === mes);
+  }
+  return list.sort(
+    (a, b) => new Date(b.fechaSubida).getTime() - new Date(a.fechaSubida).getTime()
+  );
+};
+
+export const saveComprobante = (comprobante: ComprobantePago) => {
+  const list = getComprobantes();
+  const index = list.findIndex(c => c.id === comprobante.id);
+  if (index >= 0) {
+    list[index] = comprobante;
+  } else {
+    list.push(comprobante);
+  }
+  localStorage.setItem(STORAGE_KEYS.COMPROBANTES, JSON.stringify(list));
+};
+
+export const updateComprobanteEstado = (
+  id: string,
+  estado: EstadoComprobante,
+  comentario?: string
+) => {
+  const list = getComprobantes();
+  const comp = list.find(c => c.id === id);
+  if (comp) {
+    comp.estado = estado;
+    comp.comentarioValidacion = comentario ?? '';
+    comp.fechaValidacion = new Date().toISOString();
+    localStorage.setItem(STORAGE_KEYS.COMPROBANTES, JSON.stringify(list));
+  }
 };

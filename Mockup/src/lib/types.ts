@@ -149,3 +149,35 @@ export interface TripEvent {
   hora: string;
   descripcion: string;
 }
+
+// ── Comprobantes de pago (HU-FIN-03) ───────────────────────────────────────
+// Espeja la estructura de ComprobantePago del backend Django del equipo.
+export type EstadoComprobante = 'pendiente' | 'aprobado' | 'rechazado';
+
+export interface ComprobantePago {
+  id: string;
+  /** ID del conductor que debe revisar el comprobante */
+  conductorId: string;
+  /** Enlace opcional al estudiante */
+  studentId?: string;
+  /** Nombre del acudiente que envió el comprobante */
+  acudienteNombre: string;
+  /** Nombre del estudiante al que corresponde el pago */
+  estudianteNombre: string;
+  /** Mes del pago en formato YYYY-MM */
+  mesPago: string;
+  /** Número o referencia de la factura asociada */
+  referenciaFactura?: string;
+  /** URL / data-URL del archivo adjunto (imagen o PDF) */
+  archivoUrl?: string;
+  archivoNombre?: string;
+  /** Monto pagado */
+  monto: number;
+  estado: EstadoComprobante;
+  /** Comentario del conductor al validar */
+  comentarioValidacion?: string;
+  /** ISO datetime de cuando el acudiente subió el comprobante */
+  fechaSubida: string;
+  /** ISO datetime de cuando el conductor validó */
+  fechaValidacion?: string;
+}
