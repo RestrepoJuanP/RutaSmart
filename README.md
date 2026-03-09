@@ -43,7 +43,7 @@ A través de un formulario web, el conductor puede ingresar los datos del vehíc
 
 El sistema muestra todos los vehículos asociados al conductor autenticado en una vista de listado.
 
-![Listado de vehículos](imagenes/Captura de pantalla 2026-03-09 122452.png)
+![Listado de vehículos](imagenes/Captura%20de%20pantalla%202026-03-09%20122452.png)
 
 ## Criterios de aceptación
 
