@@ -36,13 +36,14 @@ Cada vehículo registra información básica como:
 
 A través de un formulario web, el conductor puede ingresar los datos del vehículo para registrarlo en el sistema.
 
-![Registro de vehículo](docs/registro.png)
+![Registro de vehículo](imagenes/Captura%20de%20pantalla%202026-03-09%20122119.png)
+![Registro de vehículo](imagenes/Captura%20de%20pantalla%202026-03-09%20122129.png)
 
 ## Listado de vehículos
 
 El sistema muestra todos los vehículos asociados al conductor autenticado en una vista de listado.
 
-![Listado de vehículos](docs/listado.png)
+![Listado de vehículos](imagenes/Captura de pantalla 2026-03-09 122452.png)
 
 ## Criterios de aceptación
 
