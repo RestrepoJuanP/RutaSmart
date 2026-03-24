@@ -1,0 +1,73 @@
+{% extends "finanzas/base.html" %}
+
+{% block title %}Historial de Comprobantes – Finanzas{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2 class="mb-0">Historial de comprobantes</h2>
+</div>
+
+{% if comprobantes %}
+<div class="card shadow-sm border-0">
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead class="table-light">
+        <tr>
+          <th>Acudiente</th>
+          <th>Estudiante</th>
+          <th>Mes / Factura</th>
+          <th>Referencia</th>
+          <th class="text-end">Valor</th>
+          <th>Estado</th>
+          <th>Fecha subida</th>
+          <th>Archivo</th>
+          <th>Comentario</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for c in comprobantes %}
+        <tr>
+          <td>{{ c.acudiente_nombre }}</td>
+          <td>{{ c.estudiante_nombre }}</td>
+          <td>{{ c.mes_pago_display }}</td>
+          <td>{{ c.referencia_factura|default:"—" }}</td>
+          <td class="text-end fw-semibold">${{ c.monto|floatformat:0 }}</td>
+          <td>
+            {% if c.estado == 'pendiente' %}
+              <span class="badge badge-pendiente">Pendiente</span>
+            {% elif c.estado == 'aprobado' %}
+              <span class="badge badge-aprobado text-white">Aprobado</span>
+            {% else %}
+              <span class="badge badge-rechazado text-white">Rechazado</span>
+            {% endif %}
+          </td>
+          <td>{{ c.fecha_subida|date:"d/m/Y H:i" }}</td>
+          <td>
+            {% if c.archivo %}
+              <a href="{{ c.archivo.url }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                Ver archivo
+              </a>
+            {% else %}
+              —
+            {% endif %}
+          </td>
+          <td>
+            {% if c.comentario_validacion %}
+              <span class="text-muted small">{{ c.comentario_validacion }}</span>
+            {% else %}
+              —
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% else %}
+<div class="alert alert-info">
+  Aún no hay comprobantes registrados. Los comprobantes aparecen aquí una vez que los acudientes los envíen.
+</div>
+{% endif %}
+{% endblock %}

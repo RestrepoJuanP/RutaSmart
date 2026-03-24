@@ -1,0 +1,62 @@
+{% extends "finanzas/base.html" %}
+
+{% block title %}Historial de Gastos – Finanzas{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2 class="mb-0">Historial de gastos</h2>
+  <a href="{% url 'finanzas:gastos_registrar' %}" class="btn btn-danger">+ Registrar gasto</a>
+</div>
+
+{% if gastos %}
+<div class="alert alert-secondary d-flex justify-content-between align-items-center">
+  <span class="fw-semibold">Total de gastos:</span>
+  <span class="fs-5 text-danger fw-bold">${{ total|floatformat:0 }}</span>
+</div>
+
+<div class="card shadow-sm border-0">
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead class="table-light">
+        <tr>
+          <th>Fecha</th>
+          <th>Categoría</th>
+          <th>Descripción</th>
+          <th>Notas</th>
+          <th>Soporte</th>
+          <th class="text-end">Valor</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for g in gastos %}
+        <tr>
+          <td>{{ g.fecha|date:"d/m/Y" }}</td>
+          <td><span class="badge bg-secondary">{{ g.get_categoria_display }}</span></td>
+          <td>{{ g.descripcion }}</td>
+          <td><small class="text-muted">{{ g.notas|default:"—" }}</small></td>
+          <td>
+            {% if g.factura %}
+              <a href="{{ g.factura.url }}" target="_blank" class="btn btn-sm btn-outline-primary">Ver</a>
+            {% else %}
+              —
+            {% endif %}
+          </td>
+          <td class="text-end text-danger fw-semibold">${{ g.monto|floatformat:0 }}</td>
+          <td class="text-end">
+            <form method="post" action="{% url 'finanzas:gastos_eliminar' g.pk %}"
+                  onsubmit="return confirm('¿Eliminar este gasto?')">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-sm btn-outline-danger">Eliminar</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% else %}
+<div class="alert alert-info">Aún no hay gastos registrados.</div>
+{% endif %}
+{% endblock %}
