@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Vehículos</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    
+    <style>
+        :root {
+            --primary-blue: #1e40af;
+            --secondary-blue: #3b82f6;
+            --light-blue: #dbeafe;
+            --primary-green: #047857;
+            --secondary-green: #10b981;
+            --light-green: #d1fae5;
+        }
+
+        body {
+            background-color: #f0f9ff;
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .dashboard-container {
+            padding: 2rem 0;
+        }
+
+        .header-section {
+            background-color: white;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .header-title {
+            color: var(--primary-blue);
+            font-weight: 600;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .header-icon {
+            width: 60px;
+            height: 60px;
+            background-color: var(--light-blue);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: var(--primary-blue);
+        }
+
+        .btn-add-vehicle {
+            background-color: var(--primary-green);
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(4, 120, 87, 0.3);
+        }
+
+        .btn-add-vehicle:hover {
+            background-color: #065f46;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(4, 120, 87, 0.4);
+            color: white;
+        }
+
+        .vehicle-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .vehicle-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+            border-color: var(--light-blue);
+        }
+
+        .vehicle-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1.25rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f3f4f6;
+        }
+
+        .vehicle-placa {
+            background-color: var(--primary-blue);
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1.3rem;
+            letter-spacing: 2px;
+            box-shadow: 0 2px 8px rgba(30, 64, 175, 0.3);
+        }
+
+        .vehicle-brand {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary-green);
+            margin-bottom: 0.25rem;
+        }
+
+        .vehicle-model {
+            color: #6b7280;
+            font-size: 0.95rem;
+        }
+
+        .vehicle-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background-color: #f9fafb;
+            border-radius: 8px;
+        }
+
+        .info-icon {
+            width: 35px;
+            height: 35px;
+            background-color: var(--light-blue);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-blue);
+            font-size: 1rem;
+        }
+
+        .info-content {
+            flex: 1;
+        }
+
+        .info-label {
+            font-size: 0.75rem;
+            color: #6b7280;
+            margin-bottom: 0.1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-value {
+            font-weight: 600;
+            color: #1f2937;
+            font-size: 0.95rem;
+        }
+
+        .vehicle-actions {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: flex-end;
+        }
+
+        .btn-action {
+            padding: 0.6rem 1.25rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-view {
+            background-color: var(--light-blue);
+            color: var(--primary-blue);
+        }
+
+        .btn-view:hover {
+            background-color: var(--secondary-blue);
+            color: white;
+        }
+
+        .btn-edit {
+            background-color: var(--light-green);
+            color: var(--primary-green);
+        }
+
+        .btn-edit:hover {
+            background-color: var(--secondary-green);
+            color: white;
+        }
+
+        .btn-delete {
+            background-color: #fee2e2;
+            color: #dc2626;
+        }
+
+        .btn-delete:hover {
+            background-color: #dc2626;
+            color: white;
+        }
+
+        .empty-state {
+            background: white;
+            border-radius: 20px;
+            padding: 4rem 2rem;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .empty-icon {
+            width: 120px;
+            height: 120px;
+            background-color: var(--light-blue);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: var(--primary-blue);
+            margin: 0 auto 1.5rem;
+        }
+
+        .empty-title {
+            color: var(--primary-blue);
+            font-weight: 600;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-text {
+            color: #6b7280;
+            margin-bottom: 2rem;
+        }
+
+        .stats-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            text-align: center;
+        }
+
+        .stats-icon {
+            width: 50px;
+            height: 50px;
+            background-color: var(--light-green);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--primary-green);
+            margin: 0 auto 1rem;
+        }
+
+        .stats-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-bottom: 0.25rem;
+        }
+
+        .stats-label {
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .vehicle-header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .vehicle-actions {
+                width: 100%;
+                flex-wrap: wrap;
+            }
+
+            .btn-action {
+                flex: 1;
+            }
+
+            .vehicle-info {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Animación de entrada */
+        .vehicle-card {
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .badge-combustible {
+            background-color: var(--light-blue);
+            color: var(--primary-blue);
+            padding: 0.35rem 0.75rem;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .badge-transmision {
+            background-color: var(--light-green);
+            color: var(--primary-green);
+            padding: 0.35rem 0.75rem;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container dashboard-container">
+        <!-- Header -->
+        <div class="header-section">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="header-title">
+                        <div class="header-icon">
+                            <i class="bi bi-car-front-fill"></i>
+                        </div>
+                        <div>
+                            Mis Vehículos
+                        </div>
+                    </h1>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lista de Vehículos -->
+        {% if vehiculos %}
+            <div class="row">
+                {% for vehiculo in vehiculos %}
+                <div class="col-12">
+                    <div class="vehicle-card">
+                        <div class="vehicle-header">
+                            <div>
+                                <div class="vehicle-placa">{{ vehiculo.placa }}</div>
+                            </div>
+                            <div class="text-end">
+                                <div class="vehicle-brand">{{ vehiculo.marca }} {{ vehiculo.linea }}</div>
+                                <div class="vehicle-model">Modelo {{ vehiculo.modelo }}</div>
+                            </div>
+                        </div>
+
+                        <div class="vehicle-info">
+                            <div class="info-item">
+                                <div class="info-icon">
+                                    <i class="bi bi-palette-fill"></i>
+                                </div>
+                                <div class="info-content">
+                                    <div class="info-label">Color</div>
+                                    <div class="info-value">{{ vehiculo.color|capfirst }}</div>
+                                </div>
+                            </div>
+
+                            <div class="info-item">
+                                <div class="info-icon">
+                                    <i class="bi bi-people-fill"></i>
+                                </div>
+                                <div class="info-content">
+                                    <div class="info-label">Asientos</div>
+                                    <div class="info-value">{{ vehiculo.num_asientos }}</div>
+                                </div>
+                            </div>
+
+                            <div class="info-item">
+                                <div class="info-icon">
+                                    <i class="bi bi-fuel-pump-fill"></i>
+                                </div>
+                                <div class="info-content">
+                                    <div class="info-label">Combustible</div>
+                                    <div class="info-value">
+                                        <span class="badge-combustible">{{ vehiculo.get_combustible_display }}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="info-item">
+                                <div class="info-icon">
+                                    <i class="bi bi-speedometer2"></i>
+                                </div>
+                                <div class="info-content">
+                                    <div class="info-label">Transmisión</div>
+                                    <div class="info-value">
+                                        <span class="badge-transmision">{{ vehiculo.get_transmision_display }}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {% if vehiculo.cilindraje %}
+                            <div class="info-item">
+                                <div class="info-icon">
+                                    <i class="bi bi-speedometer"></i>
+                                </div>
+                                <div class="info-content">
+                                    <div class="info-label">Cilindraje</div>
+                                    <div class="info-value">{{ vehiculo.cilindraje }} cc</div>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <!-- Estado Vacío -->
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="bi bi-car-front"></i>
+                </div>
+                <h3 class="empty-title">No tienes vehículos registrados</h3>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Animación escalonada de las tarjetas
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.vehicle-card');
+            cards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.1}s`;
+            });
+        });
+    </script>
+</body>
+</html>
