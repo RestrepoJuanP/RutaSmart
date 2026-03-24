@@ -1,74 +1,159 @@
-# Gestión de Vehículos
+# RutaSmart
 
-Este módulo implementa la **Historia de Usuario HU-003 – Registro y visualización de vehículos** para el sistema RutaSmart. Permite a un conductor registrar sus vehículos y consultar el listado de los mismos para mantener organizada la información operativa del servicio.
+RutaSmart es una aplicación web desarrollada con **Django** para apoyar la gestión del transporte escolar. En el estado actual del proyecto se integraron en una sola base de código los módulos desarrollados a partir de las historias de usuario del equipo, con una estructura unificada de proyecto para facilitar su ejecución, mantenimiento y posterior despliegue.
 
-## Historia de Usuario
+## Estado actual del proyecto
 
-**HU-003 – Registro y visualización de vehículos**
+En esta versión se consolidó un único proyecto Django con los siguientes módulos principales:
 
-**Connextra:**  
-Como conductor, quiero registrar y visualizar mis vehículos, para mantener organizada la información operativa del servicio.
+- **accounts**: registro, inicio de sesión, cierre de sesión y dashboards por rol.
+- **students**: registro, edición, visualización y desactivación lógica de estudiantes.
+- **vehiculo**: registro y listado de vehículos.
+- **conductor**: entidades de apoyo relacionadas con el conductor.
+- **finanzas**: dashboard financiero, historial de comprobantes, registro e historial de gastos.
+- **pagos**: carga y consulta de comprobantes de pago por parte del acudiente.
 
-## Descripción
+## Tecnologías utilizadas
 
-El módulo permite que un conductor autenticado registre vehículos en el sistema y consulte el listado de los vehículos asociados a su cuenta. La información se almacena en la base de datos y se presenta en una interfaz web desarrollada con Django y Bootstrap.
+- Python 3.11 o superior
+- Django 5.1+
+- SQLite3
+- HTML5
+- Bootstrap 5 (vía CDN en plantillas)
 
-Cada vehículo registra información básica como:
+## Estructura general del proyecto
 
-- Placa
-- Marca
-- Línea
-- Modelo
-- Color
-- Número de asientos
-- Tipo de combustible
-- Tipo de transmisión
-- Cilindraje
+```text
+RutaSmart/
+├── accounts/
+├── conductor/
+├── finanzas/
+├── media/
+├── pagos/
+├── rutasmart_backend/
+├── students/
+├── templates/
+├── vehiculo/
+├── .gitignore
+├── manage.py
+├── README.md
+└── requirements.txt
+```
 
-## Funcionalidades implementadas
+## Requisitos previos
 
-- Registro de vehículos por parte del conductor.
-- Almacenamiento de la información en la base de datos.
-- Visualización del listado de vehículos registrados por el conductor.
-- Validación de datos y manejo de errores en el registro.
+Antes de ejecutar el proyecto, asegúrate de tener instalado:
 
-## Registro de vehículo
+- **Python 3.11 o superior**
+- **pip**
+- Un entorno virtual recomendado (`venv`)
 
-A través de un formulario web, el conductor puede ingresar los datos del vehículo para registrarlo en el sistema.
+## Instalación y ejecución
 
-![Registro de vehículo](imagenes/Captura%20de%20pantalla%202026-03-09%20122119.png)
-![Registro de vehículo](imagenes/Captura%20de%20pantalla%202026-03-09%20122129.png)
+### 1. Clonar el repositorio
 
-## Listado de vehículos
+```bash
+git clone <URL_DEL_REPOSITORIO>
+cd RutaSmart
+```
 
-El sistema muestra todos los vehículos asociados al conductor autenticado en una vista de listado.
+### 2. Crear y activar entorno virtual
 
-![Listado de vehículos](imagenes/Captura%20de%20pantalla%202026-03-09%20122452.png)
+#### En Windows (PowerShell)
 
-## Criterios de aceptación
+```powershell
+python -m venv venv
+.\venv\Scripts\Activate.ps1
+```
 
-### Escenario 1 – Registro de vehículo
+#### En Windows (cmd)
 
-**Dado** que el conductor ha iniciado sesión,  
-**Cuando** registra un vehículo con placa, modelo y capacidad válidos,  
-**Entonces** el sistema debe guardar el vehículo en la base de datos.
+```bat
+python -m venv venv
+venv\Scripts\activate
+```
 
-### Escenario 2 – Visualización de vehículos
+#### En Linux / macOS
 
-**Dado** que el conductor consulta su módulo de vehículos,  
-**Cuando** accede al listado de vehículos,  
-**Entonces** el sistema debe mostrar todos los vehículos asociados a su cuenta.
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
 
-### Escenario 3 – Manejo de errores
+### 3. Instalar dependencias
 
-**Dado** que un usuario intenta registrar un vehículo,  
-**Cuando** el usuario no está asociado a un conductor o deja campos obligatorios sin completar,  
-**Entonces** el sistema debe mostrar un mensaje de error y no guardar la información en la base de datos.
+```bash
+pip install -r requirements.txt
+```
 
-## Mejoras para próximas entregas
+### 4. Aplicar migraciones
 
-Para futuras iteraciones del sistema se planea ampliar el módulo de gestión de vehículos con las siguientes funcionalidades:
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
 
-- **Actualización de vehículos:** permitir que el conductor modifique la información de un vehículo ya registrado (color, modelo, capacidad, etc.).
-- **Eliminación de vehículos:** permitir que el conductor elimine vehículos que ya no estén en uso dentro del sistema.
-- **Validaciones adicionales:** agregar validaciones más estrictas para datos como formato de placa, soat y tecnomecanica.
+### 5. Crear superusuario (opcional)
+
+```bash
+python manage.py createsuperuser
+```
+
+### 6. Ejecutar el servidor
+
+```bash
+python manage.py runserver
+```
+
+Luego abre en el navegador:
+
+```text
+http://127.0.0.1:8000/
+```
+
+## Rutas principales
+
+Dependiendo de la configuración actual de `rutasmart_backend/urls.py`, la aplicación integra las siguientes rutas base:
+
+- `/` → página principal / autenticación
+- `/admin/` → panel de administración de Django
+- `/students/` → gestión de estudiantes
+- `/vehiculos/` → gestión de vehículos
+- `/finanzas/` → dashboard e historial financiero
+- `/pagos/` → carga y consulta de comprobantes de pago
+
+## Archivos importantes
+
+- `manage.py`: punto de entrada principal del proyecto.
+- `rutasmart_backend/settings.py`: configuración general del proyecto.
+- `rutasmart_backend/urls.py`: enrutamiento principal.
+- `templates/`: plantillas compartidas del proyecto.
+- `media/`: archivos cargados por usuarios, como comprobantes o facturas.
+
+## Buenas prácticas adoptadas en esta integración
+
+- Se dejó **un solo proyecto Django principal**.
+- Se eliminaron bases de datos locales duplicadas del repositorio.
+- Se ignoraron archivos generados automáticamente mediante `.gitignore`.
+- Se unificó la estructura de plantillas por aplicación.
+- Se organizó el proyecto para que los módulos queden accesibles desde una sola aplicación funcional.
+
+## Notas importantes
+
+- La base de datos `db.sqlite3` **no debe subirse al repositorio**.
+- Las carpetas `__pycache__` y archivos `.pyc` tampoco deben versionarse.
+- Si se modifica la estructura de modelos, se deben volver a generar migraciones.
+- En futuras iteraciones se recomienda fortalecer la integración entre roles, navegación entre módulos y validaciones de negocio.
+
+## Equipo y contexto
+
+Este proyecto hace parte del desarrollo académico de **RutaSmart**, una solución enfocada en la digitalización y organización de procesos de transporte escolar.
+
+---
+
+Si el proyecto presenta errores al iniciar, verifica primero:
+
+1. que el entorno virtual esté activo,
+2. que las dependencias estén instaladas,
+3. que las migraciones se hayan aplicado correctamente,
+4. y que la configuración en `settings.py` y `urls.py` corresponda a la estructura final integrada.
