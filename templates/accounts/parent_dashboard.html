@@ -5,8 +5,8 @@
 {% block content %}
 <div class="card border-0 shadow-sm mb-4">
     <div class="card-body p-4">
-        <h1 class="h3 mb-1">Panel de Padre/Estudiante</h1>
-        <p class="text-secondary mb-0">Vista inicial para confirmaciones y notificaciones.</p>
+        <h1 class="h3 mb-1">Panel de Padre/Acudiente</h1>
+        <p class="text-secondary mb-0">Desde aquí puedes gestionar estudiantes y cargar comprobantes de pago.</p>
     </div>
 </div>
 
@@ -14,16 +14,23 @@
     <div class="col-md-6">
         <div class="card border-0 shadow-sm h-100">
             <div class="card-body">
-                <h2 class="h6">Confirmar asistencia</h2>
-                <p class="text-secondary mb-0">Flujo pendiente para FR09-FR10.</p>
+                <h2 class="h5">Estudiantes</h2>
+                <p class="text-secondary">Registra, edita o desactiva los estudiantes asociados a tu cuenta.</p>
+                <div class="d-flex gap-2">
+                    <a href="{% url 'students:student_list' %}" class="btn btn-primary">Ver estudiantes</a>
+                    <a href="{% url 'students:student_create' %}" class="btn btn-outline-primary">Registrar estudiante</a>
+                </div>
             </div>
         </div>
     </div>
     <div class="col-md-6">
         <div class="card border-0 shadow-sm h-100">
             <div class="card-body">
-                <h2 class="h6">Estado del servicio</h2>
-                <p class="text-secondary mb-0">Flujo pendiente para notificaciones FR24-FR26.</p>
+                <h2 class="h5">Pagos</h2>
+                <p class="text-secondary">Carga comprobantes y consulta si el conductor los aprobó o rechazó.</p>
+                <div class="d-flex gap-2">
+                    <a href="{% url 'pagos:finanzas_acudiente' %}" class="btn btn-success">Ir a pagos</a>
+                </div>
             </div>
         </div>
     </div>

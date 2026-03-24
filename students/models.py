@@ -1,12 +1,12 @@
-from django.db import models
 from django.conf import settings
+from django.db import models
 
 
 class Student(models.Model):
     owner = models.ForeignKey(
-    settings.AUTH_USER_MODEL,
-    on_delete=models.CASCADE,
-    related_name="students"
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="students",
     )
     full_name = models.CharField(max_length=120)
     address = models.CharField(max_length=255)
@@ -21,4 +21,4 @@ class Student(models.Model):
         ordering = ["full_name"]
 
     def __str__(self):
-        return f"{self.full_name} - {self.owner.username}"
+        return f"{self.full_name} - {self.owner.full_name}"

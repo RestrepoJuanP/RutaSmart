@@ -1,8 +1,9 @@
-from django.urls import include, path
-from .views import registerVehicleView, listVehicleView
+from django.urls import path
+from .views import RegisterVehicleView, ListVehicleView
+
+app_name = "vehiculo"
 
 urlpatterns = [
-    path('register/', registerVehicleView.as_view(), name='register_vehicle'),
-    path('list/', listVehicleView.as_view(), name='list_vehicle'),
-
+    path("", ListVehicleView.as_view(), name="list"),
+    path("registrar/", RegisterVehicleView.as_view(), name="register"),
 ]
