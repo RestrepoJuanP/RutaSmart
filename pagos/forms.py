@@ -2,8 +2,7 @@ import re
 from pathlib import Path
 
 from django import forms
-
-from .models import ComprobantePago
+from finanzas.models import ComprobantePago
 
 
 class ComprobantePagoForm(forms.ModelForm):
@@ -20,7 +19,13 @@ class ComprobantePagoForm(forms.ModelForm):
 
     class Meta:
         model = ComprobantePago
-        fields = ['mes_pago', 'acudiente_nombre', 'estudiante_nombre', 'referencia_factura', 'archivo']
+        fields = [
+            'mes_pago',
+            'acudiente_nombre',
+            'estudiante_nombre',
+            'referencia_factura',
+            'archivo',
+        ]
         labels = {
             'acudiente_nombre': 'Nombre del acudiente',
             'estudiante_nombre': 'Nombre del estudiante',
@@ -60,3 +65,11 @@ class ComprobantePagoForm(forms.ModelForm):
             raise forms.ValidationError('El archivo no puede superar 5 MB.')
 
         return archivo
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        if instance.monto is None:
+            instance.monto = 0
+        if commit:
+            instance.save()
+        return instance

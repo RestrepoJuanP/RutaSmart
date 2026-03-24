@@ -54,14 +54,14 @@ class ComprobantePago(models.Model):
 
 class Gasto(models.Model):
     class Categoria(models.TextChoices):
-        COMBUSTIBLE  = 'combustible',  'Combustible'
+        COMBUSTIBLE = 'combustible', 'Combustible'
         MANTENIMIENTO = 'mantenimiento', 'Mantenimiento'
-        PEAJES       = 'peajes',       'Peajes'
-        SEGUROS      = 'seguros',      'Seguros'
-        OTROS        = 'otros',        'Otros'
+        PEAJES = 'peajes', 'Peajes'
+        SEGUROS = 'seguros', 'Seguros'
+        OTROS = 'otros', 'Otros'
 
     descripcion = models.CharField(max_length=200)
-    categoria   = models.CharField(
+    categoria = models.CharField(
         max_length=20,
         choices=Categoria.choices,
         default=Categoria.OTROS,
