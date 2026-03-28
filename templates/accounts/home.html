@@ -1,0 +1,35 @@
+﻿{% extends "base.html" %}
+
+{% block title %}Inicio | RutaSmart{% endblock title %}
+
+{% block content %}
+<div class="row g-4 align-items-stretch">
+    <div class="col-lg-7">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body p-4">
+                <h1 class="display-6 fw-bold">Gestión inteligente del transporte escolar</h1>
+                <p class="lead text-secondary">
+                    Registro y autenticación inicial para conductores y padres/estudiantes.
+                </p>
+                <div class="d-flex gap-2">
+                    <a href="{% url 'accounts:register' %}" class="btn btn-primary">Crear cuenta</a>
+                    <a href="{% url 'accounts:login' %}" class="btn btn-outline-primary">Iniciar sesión</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-5">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body p-4">
+                <h2 class="h5">Historias de usuario cubiertas</h2>
+                <ul class="mb-0">
+                    <li>Registro de usuario con rol</li>
+                    <li>Almacenamiento persistente en base de datos</li>
+                    <li>Autenticación con correo y contraseña</li>
+                    <li>Pantalla específica por tipo de usuario</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

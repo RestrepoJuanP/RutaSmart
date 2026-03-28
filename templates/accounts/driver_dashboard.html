@@ -1,0 +1,39 @@
+﻿{% extends "base.html" %}
+
+{% block title %}Panel Conductor | RutaSmart{% endblock title %}
+
+{% block content %}
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body p-4">
+        <h1 class="h3 mb-1">Panel de Conductor</h1>
+        <p class="text-secondary mb-0">Desde aquí puedes gestionar vehículos y revisar el estado financiero del servicio.</p>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <h2 class="h5">Gestión de vehículos</h2>
+                <p class="text-secondary">Registra vehículos y consulta los ya asociados a tu perfil de conductor.</p>
+                <div class="d-flex gap-2">
+                    <a href="{% url 'vehiculo:list' %}" class="btn btn-primary">Ver vehículos</a>
+                    <a href="{% url 'vehiculo:register' %}" class="btn btn-outline-primary">Registrar vehículo</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <h2 class="h5">Finanzas</h2>
+                <p class="text-secondary">Consulta comprobantes, aprueba pagos de acudientes y registra gastos operativos.</p>
+                <div class="d-flex gap-2">
+                    <a href="{% url 'finanzas:dashboard' %}" class="btn btn-success">Ir a finanzas</a>
+                    <a href="{% url 'finanzas:historial' %}" class="btn btn-outline-success">Ver comprobantes</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

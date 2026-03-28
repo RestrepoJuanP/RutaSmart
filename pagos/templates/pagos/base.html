@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block title %}RutaSmart{% endblock %}</title>
+  <style>
+    /* ─── Reset ─── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ─── Base ─── */
+    body {
+      font-family: "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
+      background: #F5F7FA;
+      color: #1F2937;
+      min-height: 100vh;
+    }
+
+    /* ─── Header ─── */
+    .rs-header {
+      background: #fff;
+      border-bottom: 1px solid #E5E7EB;
+      position: sticky;
+      top: 0;
+      z-index: 40;
+    }
+    .rs-header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .rs-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .rs-logo {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: #2A6DF4;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+      letter-spacing: -0.5px;
+    }
+    .rs-brand-name {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #111827;
+      line-height: 1.2;
+    }
+    .rs-brand-sub {
+      font-size: 0.72rem;
+      color: #6B7280;
+      line-height: 1;
+    }
+
+    /* ─── Layout ─── */
+    .rs-main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 5rem;
+    }
+
+    /* ─── Messages ─── */
+    .rs-messages { list-style: none; margin-bottom: 1.5rem; }
+    .rs-message {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      border-radius: 10px;
+      padding: 0.875rem 1rem;
+      margin-bottom: 0.5rem;
+      font-size: 0.875rem;
+      background: #ecfeff;
+      border: 1px solid #a5f3fc;
+      color: #164e63;
+    }
+
+    /* ─── Global chips ─── */
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      border-radius: 999px;
+      border: 1px solid;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.2rem 0.65rem;
+      white-space: nowrap;
+    }
+    .chip-aprobado  { background: rgba(52,199,89,.1);  border-color: #34C759; color: #16a34a; }
+    .chip-pendiente { background: rgba(255,204,0,.15); border-color: #FFCC00; color: #92400E; }
+    .chip-rechazado { background: rgba(255,59,48,.1);  border-color: #FF3B30; color: #FF3B30; }
+
+    /* ─── Shared form controls ─── */
+    .form-control {
+      width: 100%;
+      border: 1px solid #D1D5DB;
+      border-radius: 8px;
+      padding: 0.65rem 0.875rem;
+      font: inherit;
+      font-size: 0.9rem;
+      color: #1F2937;
+      background: #fff;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .form-control:focus {
+      outline: none;
+      border-color: #2A6DF4;
+      box-shadow: 0 0 0 3px rgba(42,109,244,.12);
+    }
+
+    {% block extra_styles %}{% endblock %}
+  </style>
+</head>
+<body>
+
+  <header class="rs-header">
+    <div class="rs-header-inner">
+      <div class="rs-brand">
+        <div class="rs-logo">RS</div>
+        <div>
+          <div class="rs-brand-name">RutaSmart</div>
+          <div>
+            <a href="{% url 'accounts:parent_dashboard' %}" style="text-decoration:none;color:#374151;font-weight:600;">← Volver al panel</a>
+          </div>
+          <div class="rs-brand-sub">Portal del Acudiente</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="rs-main">
+    {% if messages %}
+      <ul class="rs-messages">
+        {% for message in messages %}
+          <li class="rs-message">{{ message }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+
+    {% block content %}{% endblock %}
+  </main>
+
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>

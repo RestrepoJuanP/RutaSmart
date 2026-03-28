@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}{% block finanzas_title %}Módulo Finanzas{% endblock %}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h1 class="h3 mb-1">Finanzas del conductor</h1>
+    <p class="text-secondary mb-0">Consulta comprobantes, valida pagos y registra gastos.</p>
+  </div>
+  <div class="d-flex gap-2">
+    <a href="{% url 'accounts:driver_dashboard' %}" class="btn btn-outline-secondary">Volver al panel</a>
+    <a href="{% url 'finanzas:dashboard' %}" class="btn btn-primary">Dashboard</a>
+  </div>
+</div>
+
+<div class="d-flex flex-wrap gap-2 mb-4">
+  <a href="{% url 'finanzas:historial' %}" class="btn btn-outline-primary btn-sm">Comprobantes</a>
+  <a href="{% url 'finanzas:gastos_historial' %}" class="btn btn-outline-primary btn-sm">Gastos</a>
+  <a href="{% url 'finanzas:gastos_registrar' %}" class="btn btn-outline-danger btn-sm">+ Registrar gasto</a>
+</div>
+
+{% block finanzas_content %}{% endblock %}
+{% endblock %}
