@@ -24,6 +24,12 @@
                     <div class="mb-3">
                         <label class="form-label">Dirección</label>
                         {{ form.address }}
+                        {% if form.address.help_text %}
+                            <small class="text-muted d-block">{{ form.address.help_text }}</small>
+                        {% endif %}
+                        {% if form.address.errors %}
+                            <small class="text-danger">{{ form.address.errors|striptags }}</small>
+                        {% endif %}
                     </div>
 
                     <div class="mb-3">

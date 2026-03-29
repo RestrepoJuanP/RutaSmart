@@ -26,6 +26,18 @@
     <div class="col-md-6">
         <div class="card border-0 shadow-sm h-100">
             <div class="card-body">
+                <h2 class="h5">Rutas y paradas</h2>
+                <p class="text-secondary">Asigna estudiantes a rutas y visualiza el recorrido con Google Maps.</p>
+                <div class="d-flex gap-2">
+                    <a href="{% url 'ruta:ruta_list' %}" class="btn btn-warning">Gestionar rutas</a>
+                    <a href="{% url 'ruta:ruta_create' %}" class="btn btn-outline-warning">Crear ruta</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
                 <h2 class="h5">Finanzas</h2>
                 <p class="text-secondary">Consulta comprobantes, aprueba pagos de acudientes y registra gastos operativos.</p>
                 <div class="d-flex gap-2">
