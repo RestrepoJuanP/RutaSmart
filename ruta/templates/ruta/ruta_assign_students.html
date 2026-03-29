@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}Asignar Estudiantes | RutaSmart{% endblock title %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="mb-0">Asignar estudiantes a {{ ruta.nombre }}</h2>
+        <small class="text-muted">Selecciona las paradas y define el orden de recogida</small>
+    </div>
+    <a href="{% url 'ruta:route_map' ruta.pk %}" class="btn btn-success">Visualizar ruta</a>
+</div>
+
+<div class="card shadow-sm border-0 mb-3">
+    <div class="card-body">
+        <div class="row g-3">
+            <div class="col-md-6"><strong>Ruta:</strong> {{ ruta.nombre }}</div>
+            <div class="col-md-6"><strong>Colegio (destino final):</strong> {{ ruta.direccion_colegio }}</div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm border-0">
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            {% if student_rows %}
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Asignar</th>
+                                <th>Estudiante</th>
+                                <th>Direccion</th>
+                                <th>Acudiente</th>
+                                <th>Orden</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in student_rows %}
+                            <tr>
+                                <td>
+                                    <input
+                                        type="checkbox"
+                                        name="student_ids"
+                                        value="{{ row.student.pk }}"
+                                        {% if row.is_assigned %}checked{% endif %}
+                                    >
+                                </td>
+                                <td>{{ row.student.full_name }}</td>
+                                <td>{{ row.student.address }}</td>
+                                <td>{{ row.student.owner.full_name }}</td>
+                                <td style="max-width: 120px;">
+                                    <input
+                                        type="number"
+                                        min="1"
+                                        class="form-control form-control-sm"
+                                        name="orden_{{ row.student.pk }}"
+                                        value="{{ row.assigned_order }}"
+                                        placeholder="#"
+                                    >
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">Guardar asignaciones</button>
+                    <a href="{% url 'ruta:ruta_list' %}" class="btn btn-outline-secondary">Volver</a>
+                </div>
+            {% else %}
+                <div class="alert alert-info mb-0">No hay estudiantes activos creados por acudientes.</div>
+            {% endif %}
+        </form>
+    </div>
+</div>
+{% endblock content %}

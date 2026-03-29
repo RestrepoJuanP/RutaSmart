@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Nueva Ruta | RutaSmart{% endblock title %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4">
+                <h2 class="h4 mb-3">Crear ruta</h2>
+                <p class="text-muted">Define la ruta y la direccion del colegio (siempre sera la parada final).</p>
+
+                <form method="post" class="vstack gap-3">
+                    {% csrf_token %}
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger mb-0">{{ form.non_field_errors }}</div>
+                    {% endif %}
+                    <div>
+                        <label for="id_nombre" class="form-label">Nombre de la ruta</label>
+                        {{ form.nombre }}
+                        {% if form.nombre.errors %}
+                            <small class="text-danger">{{ form.nombre.errors|striptags }}</small>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <label for="id_direccion_colegio" class="form-label">Direccion del colegio</label>
+                        {{ form.direccion_colegio }}
+                        {% if form.direccion_colegio.help_text %}
+                            <small class="text-muted d-block">{{ form.direccion_colegio.help_text }}</small>
+                        {% endif %}
+                        {% if form.direccion_colegio.errors %}
+                            <small class="text-danger">{{ form.direccion_colegio.errors|striptags }}</small>
+                        {% endif %}
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">Guardar ruta</button>
+                        <a href="{% url 'ruta:ruta_list' %}" class="btn btn-outline-secondary">Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

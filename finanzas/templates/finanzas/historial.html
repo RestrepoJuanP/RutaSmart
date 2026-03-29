@@ -21,7 +21,7 @@
           <th>Estado</th>
           <th>Fecha subida</th>
           <th>Archivo</th>
-          <th>Comentario</th>
+          <th>Acciones</th>
         </tr>
       </thead>
       <tbody>
@@ -52,8 +52,11 @@
             {% endif %}
           </td>
           <td>
-            {% if c.comentario_validacion %}
-              <span class="text-muted small">{{ c.comentario_validacion }}</span>
+            {% if c.estado == 'pendiente' %}
+              <form method="post" action="{% url 'finanzas:aprobar_comprobante' c.pk %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm btn-success">Aprobar</button>
+              </form>
             {% else %}
               —
             {% endif %}

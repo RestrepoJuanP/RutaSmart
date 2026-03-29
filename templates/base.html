@@ -16,6 +16,7 @@
                     {% if user.role == 'driver' %}
                         <a class="btn btn-sm btn-outline-light" href="{% url 'accounts:driver_dashboard' %}">Mi panel</a>
                         <a class="btn btn-sm btn-outline-light" href="{% url 'vehiculo:list' %}">Vehículos</a>
+                        <a class="btn btn-sm btn-outline-light" href="{% url 'ruta:ruta_list' %}">Rutas</a>
                         <a class="btn btn-sm btn-outline-light" href="{% url 'finanzas:dashboard' %}">Finanzas</a>
                     {% elif user.role == 'parent_student' %}
                         <a class="btn btn-sm btn-outline-light" href="{% url 'accounts:parent_dashboard' %}">Mi panel</a>

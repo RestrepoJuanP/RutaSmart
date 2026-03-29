@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block title %}Mapa de Ruta | RutaSmart{% endblock title %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="mb-0">Visualizacion de {{ ruta.nombre }}</h2>
+        <small class="text-muted">El colegio siempre es el destino final de la ruta</small>
+    </div>
+    <a href="{% url 'ruta:assign_students' ruta.pk %}" class="btn btn-outline-primary">Editar paradas</a>
+</div>
+
+<div class="row g-3 mb-3">
+    <div class="col-lg-4">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body">
+                <h3 class="h6">Paradas programadas</h3>
+                {% if paradas %}
+                    <ol class="mb-3">
+                        {% for parada in paradas %}
+                            <li class="mb-2">
+                                <strong>{{ parada.estudiante.full_name }}</strong><br>
+                                <span class="text-muted small">{{ parada.estudiante.address }}</span>
+                            </li>
+                        {% endfor %}
+                    </ol>
+                {% else %}
+                    <p class="text-muted">No hay estudiantes asignados en esta ruta.</p>
+                {% endif %}
+                <div class="alert alert-success py-2 mb-0">
+                    <strong>Destino final:</strong><br>
+                    {{ ruta.direccion_colegio }}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-8">
+        <div id="map" style="height: 520px; border-radius: 10px;" class="shadow-sm border"></div>
+    </div>
+</div>
+
+{{ addresses|json_script:"route-addresses" }}
+{{ ruta.direccion_colegio|json_script:"school-address" }}
+
+{% if not google_maps_api_key %}
+<div class="alert alert-warning">
+    No se encontro la variable de entorno <code>GOOGLE_MAPS_API_KEY</code>. Configurala para ver el mapa.
+</div>
+{% endif %}
+{% endblock content %}
+
+{% block extra_scripts %}
+{{ block.super }}
+<script>
+function initMap() {
+    const mapContainer = document.getElementById("map");
+    const map = new google.maps.Map(mapContainer, {
+        zoom: 12,
+        center: { lat: 4.711, lng: -74.0721 }
+    });
+
+    const addresses = JSON.parse(document.getElementById("route-addresses").textContent || "[]");
+    const schoolAddress = JSON.parse(document.getElementById("school-address").textContent || '""');
+
+    if (!schoolAddress) {
+        mapContainer.innerHTML = "<div class='p-3 text-danger'>No se definio la direccion del colegio.</div>";
+        return;
+    }
+
+    const directionsService = new google.maps.DirectionsService();
+    const directionsRenderer = new google.maps.DirectionsRenderer({ map: map, suppressMarkers: false });
+
+    let origin;
+    let destination = schoolAddress;
+    let waypoints = [];
+
+    if (addresses.length === 0) {
+        origin = schoolAddress;
+    } else if (addresses.length === 1) {
+        origin = addresses[0].direccion;
+    } else {
+        origin = addresses[0].direccion;
+        waypoints = addresses.slice(1).map((item) => ({
+            location: item.direccion,
+            stopover: true
+        }));
+    }
+
+    directionsService.route(
+        {
+            origin: origin,
+            destination: destination,
+            waypoints: waypoints,
+            optimizeWaypoints: false,
+            region: "co",
+            travelMode: google.maps.TravelMode.DRIVING
+        },
+        (response, status) => {
+            if (status === "OK") {
+                directionsRenderer.setDirections(response);
+            } else {
+                console.error("DirectionsStatus:", status, { origin, destination, waypoints });
+                let detail = "Revisa que todas tengan formato: Via y numero, Ciudad, Departamento, Colombia.";
+                if (status === "REQUEST_DENIED") {
+                    detail = "Activa Directions API (Legacy) en Google Cloud para este mismo proyecto/API key, y reinicia el servidor.";
+                }
+                mapContainer.innerHTML = "<div class='p-3 text-danger'>No fue posible calcular la ruta con las direcciones registradas. Estado: <strong>" + status + "</strong>. " + detail + "</div>";
+            }
+        }
+    );
+}
+</script>
+{% if google_maps_api_key %}
+<script async defer src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&callback=initMap"></script>
+{% endif %}
+{% endblock %}
