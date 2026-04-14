@@ -14,6 +14,7 @@
             <div class="d-flex align-items-center gap-2 flex-wrap">
                 {% if user.is_authenticated %}
                     {% if user.role == 'driver' %}
+                        <a class="btn btn-sm btn-outline-light" href="{% url 'ia:dashboard' %}"> IA</a>
                         <a class="btn btn-sm btn-outline-light" href="{% url 'accounts:driver_dashboard' %}">Mi panel</a>
                         <a class="btn btn-sm btn-outline-light" href="{% url 'vehiculo:list' %}">Vehículos</a>
                         <a class="btn btn-sm btn-outline-light" href="{% url 'ruta:ruta_list' %}">Rutas</a>

@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+
+{% block title %}Recomendación de Ruta | RutaSmart{% endblock %}
+
+{% block extra_styles %}
+<style>
+  .score-bar { height: 10px; border-radius: 5px; }
+  .rank-badge {
+    width: 40px; height: 40px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem; font-weight: 700; flex-shrink: 0;
+  }
+  .rank-1 { background: #ffd700; color: #333; }
+  .rank-2 { background: #c0c0c0; color: #333; }
+  .rank-3 { background: #cd7f32; color: #fff; }
+  .rank-other { background: #e9ecef; color: #666; }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb -->
+<nav aria-label="breadcrumb" class="mb-3">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{% url 'ia:dashboard' %}">Panel IA</a></li>
+    <li class="breadcrumb-item active">Recomendación de ruta</li>
+  </ol>
+</nav>
+
+<!-- Encabezado -->
+<div class="card border-0 shadow-sm mb-4">
+  <div class="card-body p-4">
+    <h1 class="h3 mb-1">🎯 Recomendación de Ruta</h1>
+    <p class="text-secondary mb-0">
+      Sistema basado en <strong>similitud coseno</strong> entre el embedding de la
+      dirección del estudiante y los embeddings de las descripciones de tus rutas.
+    </p>
+  </div>
+</div>
+
+<!-- Info del estudiante -->
+<div class="card border-0 shadow-sm mb-4">
+  <div class="card-body p-3 d-flex align-items-center gap-3">
+    <div class="bg-primary rounded-circle text-white d-flex align-items-center justify-content-center"
+         style="width:52px;height:52px;font-size:1.4rem;flex-shrink:0;">👤</div>
+    <div>
+      <h5 class="mb-0">{{ estudiante.full_name }}</h5>
+      <p class="text-muted small mb-0">
+        📍 {{ estudiante.address }}<br>
+        👤 Acudiente: {{ estudiante.guardian_name }}
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- Error / sin embeddings -->
+{% if error_msg %}
+  <div class="alert alert-warning d-flex align-items-start gap-3">
+    <span style="font-size:1.4rem;">⚠️</span>
+    <div>
+      <strong>No se pudieron calcular recomendaciones</strong><br>
+      {{ error_msg }}
+      {% if rutas_sin_embedding %}
+        <br><a href="{% url 'ia:dashboard' %}" class="alert-link">Ir al Panel IA →</a>
+      {% endif %}
+    </div>
+  </div>
+{% endif %}
+
+<!-- Resultados -->
+{% if recomendaciones %}
+<h4 class="mb-3">Rutas recomendadas</h4>
+
+<div class="row g-4">
+  {% for rec in recomendaciones %}
+  <div class="col-md-6 col-lg-4">
+    <div class="card border-0 shadow-sm h-100
+      {% if forloop.first %}border-start border-4 border-warning{% endif %}">
+      <div class="card-body p-4">
+        <!-- Ranking + nombre -->
+        <div class="d-flex align-items-center gap-3 mb-3">
+          <div class="rank-badge rank-{{ forloop.counter }}">
+            {% if forloop.counter == 1 %}🥇
+            {% elif forloop.counter == 2 %}🥈
+            {% elif forloop.counter == 3 %}🥉
+            {% else %}{{ forloop.counter }}{% endif %}
+          </div>
+          <div>
+            <h5 class="mb-0">{{ rec.ruta.nombre }}</h5>
+            {% if forloop.first %}
+              <span class="badge bg-warning text-dark">Mejor opción</span>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Puntaje -->
+        <div class="mb-3">
+          <div class="d-flex justify-content-between small mb-1">
+            <span class="text-muted">Similitud de ubicación</span>
+            <strong class="{% if rec.score >= 70 %}text-success{% elif rec.score >= 40 %}text-warning{% else %}text-danger{% endif %}">
+              {{ rec.score }}%
+            </strong>
+          </div>
+          <div class="progress score-bar">
+            <div class="progress-bar
+              {% if rec.score >= 70 %}bg-success{% elif rec.score >= 40 %}bg-warning{% else %}bg-danger{% endif %}"
+              role="progressbar" style="width: {{ rec.score }}%">
+            </div>
+          </div>
+        </div>
+
+        <!-- Info de la ruta -->
+        <p class="text-muted small mb-3">
+          🏫 {{ rec.ruta.direccion_colegio }}<br>
+          👥 {{ rec.ruta.paradas.count }} estudiante(s) actualmente
+        </p>
+
+        <!-- Descripción IA si existe -->
+        {% if rec.ruta.ia_data.descripcion %}
+        <p class="small bg-light rounded p-2 mb-3" style="font-size:.78rem;">
+          {{ rec.ruta.ia_data.descripcion|truncatewords:20 }}
+        </p>
+        {% endif %}
+
+        <!-- Acción -->
+        <a href="{% url 'ruta:assign_students' rec.ruta.pk %}"
+           class="btn btn-sm {% if forloop.first %}btn-warning{% else %}btn-outline-primary{% endif %} w-100">
+          Asignar a esta ruta
+        </a>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<!-- Explicación del sistema -->
+<div class="card border-0 shadow-sm mt-5">
+  <div class="card-body p-4">
+    <h5 class="mb-3">🧠 ¿Cómo funciona este sistema?</h5>
+    <div class="row g-3">
+      <div class="col-md-4 text-center">
+        <div style="font-size:2rem;">📝</div>
+        <h6>1. Descripción</h6>
+        <p class="text-muted small">GPT-4o-mini genera una descripción en lenguaje natural de cada ruta basada en sus paradas y el colegio.</p>
+      </div>
+      <div class="col-md-4 text-center">
+        <div style="font-size:2rem;">🔢</div>
+        <h6>2. Embeddings</h6>
+        <p class="text-muted small">text-embedding-3-small convierte la descripción y la dirección del estudiante en vectores numéricos de 1 536 dimensiones.</p>
+      </div>
+      <div class="col-md-4 text-center">
+        <div style="font-size:2rem;">📐</div>
+        <h6>3. Similitud coseno</h6>
+        <p class="text-muted small">Se calcula el ángulo entre los vectores. Mayor similitud = rutas que pasan por zonas similares a la del estudiante.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endif %}
+
+<div class="mt-4">
+  <a href="{% url 'ia:dashboard' %}" class="btn btn-outline-secondary">← Volver al Panel IA</a>
+</div>
+
+{% endblock %}

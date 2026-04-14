@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     'finanzas',
     'pagos',
     'ruta',
+    'ia',
 ]
 
 MIDDLEWARE = [
@@ -87,3 +88,4 @@ LOGOUT_REDIRECT_URL = 'accounts:login'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 GOOGLE_MAPS_API_KEY = os.getenv("GOOGLE_MAPS_API_KEY", "")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")

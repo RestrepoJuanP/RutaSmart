@@ -18,6 +18,7 @@ urlpatterns = [
     path('finanzas/', include('finanzas.urls')),
     path('pagos/', include('pagos.urls')),
     path('rutas/', include('ruta.urls')),
+    path('ia/', include('ia.urls')),
 ]
 
 if settings.DEBUG:
