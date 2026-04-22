@@ -34,31 +34,40 @@
           <td class="text-end fw-semibold">${{ c.monto|floatformat:0 }}</td>
           <td>
             {% if c.estado == 'pendiente' %}
-              <span class="badge badge-pendiente">Pendiente</span>
+              <span class="badge badge-warning">Pendiente</span>
             {% elif c.estado == 'aprobado' %}
-              <span class="badge badge-aprobado text-white">Aprobado</span>
+              <span class="badge badge-success">Aprobado</span>
             {% else %}
-              <span class="badge badge-rechazado text-white">Rechazado</span>
+              <span class="badge badge-danger">Rechazado</span>
             {% endif %}
           </td>
           <td>{{ c.fecha_subida|date:"d/m/Y H:i" }}</td>
           <td>
             {% if c.archivo %}
               <a href="{{ c.archivo.url }}" target="_blank" class="btn btn-sm btn-outline-primary">
-                Ver archivo
+                Ver
               </a>
             {% else %}
               —
             {% endif %}
           </td>
           <td>
-            {% if c.estado == 'pendiente' %}
-              <form method="post" action="{% url 'finanzas:aprobar_comprobante' c.pk %}">
+            <div class="btn-group btn-group-sm" role="group">
+              {% if c.estado != 'aprobado' %}
+              <form method="POST" action="{% url 'finanzas:aprobar_comprobante' c.pk %}" style="display: inline;">
                 {% csrf_token %}
-                <button type="submit" class="btn btn-sm btn-success">Aprobar</button>
+                <button type="submit" class="btn btn-sm btn-success" title="Aprobar pago">✓ Aprobar</button>
               </form>
-            {% else %}
-              —
+              {% endif %}
+              {% if c.estado != 'rechazado' %}
+              <form method="POST" action="{% url 'finanzas:rechazar_comprobante' c.pk %}" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm btn-danger" title="Rechazar pago">✕ Rechazar</button>
+              </form>
+              {% endif %}
+            </div>
+            {% if c.comentario_validacion %}
+              <small class="d-block text-muted mt-2">{{ c.comentario_validacion }}</small>
             {% endif %}
           </td>
         </tr>

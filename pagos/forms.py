@@ -23,12 +23,14 @@ class ComprobantePagoForm(forms.ModelForm):
             'mes_pago',
             'acudiente_nombre',
             'estudiante_nombre',
+            'monto',
             'referencia_factura',
             'archivo',
         ]
         labels = {
             'acudiente_nombre': 'Nombre del acudiente',
             'estudiante_nombre': 'Nombre del estudiante',
+            'monto': 'Monto depositado (en pesos)',
             'referencia_factura': 'Referencia de factura (opcional)',
             'archivo': 'Comprobante',
         }
@@ -41,6 +43,12 @@ class ComprobantePagoForm(forms.ModelForm):
                 'placeholder': 'Ej: Carlos García',
                 'class': 'form-control',
             }),
+            'monto': forms.NumberInput(attrs={
+                'placeholder': 'Ej: 250000',
+                'class': 'form-control',
+                'step': '0.01',
+                'min': '0',
+            }),
             'referencia_factura': forms.TextInput(attrs={
                 'placeholder': 'Ej: FACT-2026-03',
                 'class': 'form-control',
@@ -52,6 +60,15 @@ class ComprobantePagoForm(forms.ModelForm):
         if mes and not re.match(r'^\d{4}-\d{2}$', mes):
             raise forms.ValidationError('El formato debe ser YYYY-MM (ej: 2026-03).')
         return mes
+
+    def clean_monto(self):
+        monto = self.cleaned_data.get('monto')
+        if monto is not None:
+            if monto <= 0:
+                raise forms.ValidationError('El monto debe ser mayor a 0.')
+            if monto > 99999999.99:
+                raise forms.ValidationError('El monto es demasiado alto.')
+        return monto
 
     def clean_archivo(self):
         archivo = self.cleaned_data['archivo']

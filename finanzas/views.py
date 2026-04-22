@@ -47,10 +47,10 @@ def aprobar_comprobante(request, pk):
     comprobante = get_object_or_404(ComprobantePago, pk=pk)
     if request.method == "POST":
         comprobante.estado = ComprobantePago.Estado.APROBADO
-        comprobante.comentario_validacion = request.POST.get("comentario", "").strip()
+        comprobante.comentario_validacion = request.POST.get("comentario", "").strip() or "Aprobado por el conductor"
         comprobante.fecha_validacion = timezone.now()
         comprobante.save()
-        messages.success(request, "Comprobante aprobado correctamente.")
+        messages.success(request, f"Comprobante de {comprobante.estudiante_nombre} aprobado correctamente. Monto: ${comprobante.monto:,.0f}")
     return redirect("finanzas:historial")
 
 
@@ -58,12 +58,12 @@ def aprobar_comprobante(request, pk):
 def rechazar_comprobante(request, pk):
     comprobante = get_object_or_404(ComprobantePago, pk=pk)
     if request.method == "POST":
-        comentario = request.POST.get("comentario", "").strip() or "Comprobante rechazado por el conductor."
+        comentario = request.POST.get("comentario", "").strip() or "Comprobante rechazado por el conductor"
         comprobante.estado = ComprobantePago.Estado.RECHAZADO
         comprobante.comentario_validacion = comentario
         comprobante.fecha_validacion = timezone.now()
         comprobante.save()
-        messages.warning(request, "Comprobante rechazado.")
+        messages.warning(request, f"Comprobante de {comprobante.estudiante_nombre} rechazado.")
     return redirect("finanzas:historial")
 
 

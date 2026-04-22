@@ -76,6 +76,27 @@
             color: white;
         }
 
+        .btn-main-menu {
+            background-color: white;
+            color: var(--primary-blue);
+            border: 2px solid var(--light-blue);
+            padding: 0.7rem 1.4rem;
+            border-radius: 10px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-main-menu:hover {
+            background-color: var(--primary-blue);
+            border-color: var(--primary-blue);
+            color: white;
+            transform: translateY(-2px);
+        }
+
         .vehicle-card {
             background: white;
             border-radius: 15px;
@@ -353,6 +374,12 @@
                             Mis Vehículos
                         </div>
                     </h1>
+                </div>
+                <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                    <a href="{% url 'accounts:driver_dashboard' %}" class="btn-main-menu">
+                        <i class="bi bi-arrow-left"></i>
+                        Menú principal
+                    </a>
                 </div>
             </div>
         </div>

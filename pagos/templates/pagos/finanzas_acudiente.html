@@ -625,6 +625,18 @@
           {{ form.referencia_factura }}
         </div>
 
+        <!-- Monto depositado -->
+        <div class="form-group">
+          <label class="form-label" for="{{ form.monto.id_for_label }}">
+            Monto depositado <span class="form-required">*</span>
+          </label>
+          {{ form.monto }}
+          {% if form.monto.errors %}
+            <p class="form-error">{{ form.monto.errors|striptags }}</p>
+          {% endif %}
+          <p class="form-hint">Ingresa el valor en pesos que depositaste</p>
+        </div>
+
         <!-- Archivo -->
         <div class="form-group">
           <label class="form-label">
