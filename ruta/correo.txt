@@ -1,0 +1,133 @@
+correo
+curl -X POST "https://api.masiv.masivian.com/email/v1/delivery" \
+  -H "Authorization: Basic YXBpLmMyNHNzOmppKlBnLjB5MmtmVmxFQXBsVlM3dnpMeVUyek0yYg==" \
+  -H "Content-Type: application/json" \
+  -d '{
+      "Subject": "Recordatorio de pago de matrícula de la institución {{Institucion}} 2",
+      "From": "info.ofam@ofamscore.com",
+      "Template": {
+        "Type": "text",
+        "Value": "Hola {{Nombre}}, este mensaje es para recordarle que la matrícula de la institución {{Institucion}} presenta {{DiasMora}} días de mora. Por favor realice su pago para evitar novedades en el proceso."
+      },
+      "Recipients": [
+        {
+          "To": "miguel.a1485@gmail.com",
+          "Parameters": [
+            {
+              "Name": "Nombre",
+              "Type": "text",
+              "Value": "Miguel"
+            },
+            {"Name": "Institucion",
+             "Type": "text",
+             "Value": "Eafit"},
+
+            {"Name": "DiasMora",
+             "Type": "text",
+             "Value": "6"}
+
+          ]
+          
+        },
+        {
+            "To": "mianorpu@gmail.com",
+            "Parameters": [
+            {
+              "Name": "Nombre",
+              "Type": "text",
+              "Value": "Miguel ortiz"
+            },
+            {"Name": "Institucion",
+             "Type": "text",
+             "Value": "Francisco"},
+
+            {"Name": "DiasMora",
+             "Type": "text",
+             "Value": "10"}
+
+          ]
+            
+
+        }
+      ],
+      "Attachments": [
+        {
+          "Path": "https://drive.google.com/file/d/1R_AvRhdywCJYza2BNXdSeJlrgPlSbcQL/view?usp=sharing",
+          "Filename": "manual.pdf"
+        }
+      ]
+    }'
+
+Para la creación de campañas sms :
+
+curl -X POST "https://smssending.masivapp.com/api/campaign/V1/create" \
+  -H "Authorization: Basic YXBpLmMyNHNzOmppKlBnLjB5MmtmVmxFQXBsVlM3dnpMeVUyek0yYg==" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "campaignType": "Scheduled",
+    "addressConfirmation": "",
+    "scheduledDate": "2026-03-13T11:36:00-05:00",
+    "campaignMaxDate": "2026-03-20T19:00:00-05:00",
+    "campaignMetaData": "",
+    "campaignTimeZone": "America/Bogota",
+    "campaignNameOriginal": "Recordatorio matricula marzo prueba 6",
+    "campaignProductConfiguration": {
+        "campaignDescription": "Campaña programada para recordar pagos de matrícula a padres de familia",
+        "applyTouchesRestrictions": false,
+        "applyScheduleRestrictions": false,
+        "applyRneRestrictions": false,
+        "isReprogrammableNextDay": true,
+        "checkRepeat": false,
+        "message": "Hola {{T0Nombre}}, le recordamos que la matrícula de {{T0Institucion}} presenta {{I0DiasMora}} días de mora. Por favor realice su pago para evitar novedades en el proceso.",
+        "categories": [
+            "Nombre",
+            "Institucion",
+            "DiasMora"
+        ],
+        "messageFormat": "Large",
+        "messageType": "Standard",
+        "randomShortCode": false,
+        "block": {
+            "active": false,
+            "quantityPerBlock": 0,
+            "intervalTimeMinutes": 0
+        },
+        "shortUrl": {
+            "domain": "https://ma.sv",
+            "enable": true,
+            "type": "SPECIFIC",
+            "specificUrl": "https://google.com"
+        }
+    }
+}'
+
+Para el llenado de datos en la campaña:
+
+
+curl -X POST "https://smssending.masivapp.com/api/campaign/V1/upload-recipients/id_campaña" \
+  -H "Authorization: Basic YXBpLmMyNHNzOmppKlBnLjB5MmtmVmxFQXBsVlM3dnpMeVUyek0yYg==" \
+  -H "Content-Type: application/json" \
+  -d '{
+  "batch": [
+    {
+      "phoneNumber": "3012476332",
+      "replacementFields": {
+        "Nombre": "Miguel Ortiz",
+        "Institucion": "Francisco Antonio zea",
+        "DiasMora": 12
+      },
+      "metaData": ""
+    }
+  ]
+}'
+
+Para cerrar la campaña y que se pueda hacer el envío
+
+curl -X PUT "https://smssending.masivapp.com/api/campaign/V1/update-status/Id_campaña" \
+  -H "Authorization: Basic YXBpLmMyNHNzOmppKlBnLjB5MmtmVmxFQXBsVlM3dnpMeVUyek0yYg==" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "action": "Close"
+}'
+
+

@@ -2,17 +2,22 @@ from django import forms
 from .models import Student
 
 
-ADDRESS_FORMAT_HELP = "Formato obligatorio: Via y numero, Ciudad, Departamento, Colombia"
-ADDRESS_FORMAT_EXAMPLE = "Ejemplo: Calle 38A # 107-78, Medellin, Antioquia, Colombia"
+ADDRESS_FORMAT_HELP = "Formato permitido: Via y numero, sector o barrio opcional, Ciudad, Departamento, con Colombia opcional"
+ADDRESS_FORMAT_EXAMPLE = "Ejemplo: Calle 38A # 107-78, Calasanz, Medellin, Antioquia"
 
 
 def _is_valid_colombia_address(value):
     parts = [part.strip() for part in value.split(",") if part.strip()]
-    if len(parts) != 4:
+    if len(parts) < 3:
         return False
-    if parts[-1].lower() != "colombia":
+
+    if parts[-1].lower() == "colombia":
+        parts = parts[:-1]
+
+    if len(parts) < 3:
         return False
-    return all(len(part) >= 3 for part in parts[:-1])
+
+    return all(len(part) >= 2 for part in parts)
 
 
 class StudentForm(forms.ModelForm):
@@ -40,7 +45,7 @@ class StudentForm(forms.ModelForm):
             }),
             "address": forms.TextInput(attrs={
                 "class": "form-control",
-                "placeholder": "Calle 38A # 107-78, Medellin, Antioquia, Colombia"
+                "placeholder": "Calle 38A # 107-78, Calasanz, Medellin, Antioquia"
             }),
             "guardian_name": forms.TextInput(attrs={
                 "class": "form-control",
