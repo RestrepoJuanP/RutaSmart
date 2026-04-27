@@ -13,6 +13,7 @@ Funciones disponibles:
 
 import math
 
+from django.conf import settings
 from openai import OpenAI
 
 
@@ -21,8 +22,12 @@ from openai import OpenAI
 # ---------------------------------------------------------------------------
 
 def _get_client() -> OpenAI:
-    from ia.api_key import OPENAI_API_KEY
-    return OpenAI(api_key=OPENAI_API_KEY)
+    api_key = (settings.OPENAI_API_KEY or "").strip()
+    if not api_key:
+        raise RuntimeError(
+            "No se encontro OPENAI_API_KEY en las variables de entorno."
+        )
+    return OpenAI(api_key=api_key)
 
 
 # ---------------------------------------------------------------------------

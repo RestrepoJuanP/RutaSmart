@@ -19,7 +19,9 @@
                     <thead class="table-light">
                         <tr>
                             <th>Ruta</th>
+                            <th>Origen</th>
                             <th>Direccion colegio</th>
+                            <th>Posicion colegio</th>
                             <th>Paradas</th>
                             <th class="text-end">Acciones</th>
                         </tr>
@@ -28,7 +30,9 @@
                         {% for ruta in rutas %}
                         <tr>
                             <td class="fw-semibold">{{ ruta.nombre }}</td>
+                            <td>{{ ruta.direccion_origen|default:"No definido" }}</td>
                             <td>{{ ruta.direccion_colegio }}</td>
+                            <td>{{ ruta.get_posicion_colegio_display }}</td>
                             <td>{{ ruta.paradas.count }}</td>
                             <td class="text-end">
                                 <a href="{% url 'ruta:assign_students' ruta.pk %}" class="btn btn-sm btn-outline-primary">Asignar estudiantes</a>

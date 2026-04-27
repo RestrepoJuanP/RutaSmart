@@ -5,13 +5,23 @@ from students.models import Student
 
 
 class Ruta(models.Model):
+	class PosicionColegio(models.TextChoices):
+		INICIO = "inicio", "Inicio de la ruta"
+		FINAL = "final", "Final de la ruta"
+
 	conductor = models.ForeignKey(
 		settings.AUTH_USER_MODEL,
 		on_delete=models.CASCADE,
 		related_name="rutas",
 	)
 	nombre = models.CharField(max_length=120)
+	direccion_origen = models.CharField(max_length=255, blank=True, default="")
 	direccion_colegio = models.CharField(max_length=255)
+	posicion_colegio = models.CharField(
+		max_length=10,
+		choices=PosicionColegio.choices,
+		default=PosicionColegio.FINAL,
+	)
 	activa = models.BooleanField(default=True)
 	created_at = models.DateTimeField(auto_now_add=True)
 	updated_at = models.DateTimeField(auto_now=True)

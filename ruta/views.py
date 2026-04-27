@@ -103,10 +103,40 @@ def route_map(request, pk):
 		for p in paradas
 	]
 
+	recorrido = []
+	if ruta.posicion_colegio == Ruta.PosicionColegio.INICIO:
+		recorrido.append(
+			{
+				"tipo": "colegio",
+				"nombre": "Colegio",
+				"direccion": ruta.direccion_colegio,
+			}
+		)
+
+	recorrido.extend(
+		{
+			"tipo": "estudiante",
+			"nombre": p.estudiante.full_name,
+			"direccion": p.estudiante.address,
+			"orden": p.orden,
+		}
+		for p in paradas
+	)
+
+	if ruta.posicion_colegio == Ruta.PosicionColegio.FINAL:
+		recorrido.append(
+			{
+				"tipo": "colegio",
+				"nombre": "Colegio",
+				"direccion": ruta.direccion_colegio,
+			}
+		)
+
 	context = {
 		"ruta": ruta,
 		"paradas": paradas,
 		"addresses": addresses,
+		"recorrido": recorrido,
 		"google_maps_api_key": settings.GOOGLE_MAPS_API_KEY,
 	}
 	return render(request, "ruta/ruta_map.html", context)

@@ -15,7 +15,9 @@
     <div class="card-body">
         <div class="row g-3">
             <div class="col-md-6"><strong>Ruta:</strong> {{ ruta.nombre }}</div>
-            <div class="col-md-6"><strong>Colegio (destino final):</strong> {{ ruta.direccion_colegio }}</div>
+            <div class="col-md-6"><strong>Origen del conductor:</strong> {{ ruta.direccion_origen|default:"No definido" }}</div>
+            <div class="col-md-6"><strong>Colegio:</strong> {{ ruta.direccion_colegio }}</div>
+            <div class="col-md-6"><strong>Posicion del colegio:</strong> {{ ruta.get_posicion_colegio_display }}</div>
         </div>
     </div>
 </div>

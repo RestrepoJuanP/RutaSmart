@@ -6,7 +6,7 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
         <h2 class="mb-0">Visualizacion de {{ ruta.nombre }}</h2>
-        <small class="text-muted">El colegio siempre es el destino final de la ruta</small>
+        <small class="text-muted">La ruta puede iniciar en el origen del conductor y ubicar el colegio al inicio o al final</small>
     </div>
     <a href="{% url 'ruta:assign_students' ruta.pk %}" class="btn btn-outline-primary">Editar paradas</a>
 </div>
@@ -15,22 +15,33 @@
     <div class="col-lg-4">
         <div class="card shadow-sm border-0 h-100">
             <div class="card-body">
-                <h3 class="h6">Paradas programadas</h3>
-                {% if paradas %}
+                <h3 class="h6">Recorrido configurado</h3>
+                {% if ruta.direccion_origen %}
+                    <div class="alert alert-secondary py-2">
+                        <strong>Origen del conductor:</strong><br>
+                        {{ ruta.direccion_origen }}
+                    </div>
+                {% endif %}
+
+                {% if recorrido %}
                     <ol class="mb-3">
-                        {% for parada in paradas %}
+                        {% for punto in recorrido %}
                             <li class="mb-2">
-                                <strong>{{ parada.estudiante.full_name }}</strong><br>
-                                <span class="text-muted small">{{ parada.estudiante.address }}</span>
+                                <strong>{{ punto.nombre }}</strong><br>
+                                <span class="text-muted small">{{ punto.direccion }}</span>
                             </li>
                         {% endfor %}
                     </ol>
                 {% else %}
-                    <p class="text-muted">No hay estudiantes asignados en esta ruta.</p>
+                    <p class="text-muted">No hay puntos configurados en esta ruta.</p>
                 {% endif %}
                 <div class="alert alert-success py-2 mb-0">
-                    <strong>Destino final:</strong><br>
-                    {{ ruta.direccion_colegio }}
+                    <strong>Posicion del colegio:</strong><br>
+                    {{ ruta.get_posicion_colegio_display }}<br>
+                    <span class="small">{{ ruta.direccion_colegio }}</span>
+                </div>
+                <div class="alert alert-light py-2 mt-2 mb-0">
+                    <strong>Paradas de estudiantes:</strong> {{ paradas|length }}
                 </div>
             </div>
         </div>
@@ -42,6 +53,8 @@
 
 {{ addresses|json_script:"route-addresses" }}
 {{ ruta.direccion_colegio|json_script:"school-address" }}
+{{ ruta.direccion_origen|json_script:"driver-origin" }}
+{{ ruta.posicion_colegio|json_script:"school-position" }}
 
 {% if not google_maps_api_key %}
 <div class="alert alert-warning">
@@ -62,6 +75,8 @@ function initMap() {
 
     const addresses = JSON.parse(document.getElementById("route-addresses").textContent || "[]");
     const schoolAddress = JSON.parse(document.getElementById("school-address").textContent || '""');
+    const driverOrigin = JSON.parse(document.getElementById("driver-origin").textContent || '""');
+    const schoolPosition = JSON.parse(document.getElementById("school-position").textContent || '"final"');
 
     if (!schoolAddress) {
         mapContainer.innerHTML = "<div class='p-3 text-danger'>No se definio la direccion del colegio.</div>";
@@ -71,18 +86,39 @@ function initMap() {
     const directionsService = new google.maps.DirectionsService();
     const directionsRenderer = new google.maps.DirectionsRenderer({ map: map, suppressMarkers: false });
 
+    const plannedStops = [];
+    if (schoolPosition === "inicio") {
+        plannedStops.push(schoolAddress);
+    }
+    addresses.forEach((item) => plannedStops.push(item.direccion));
+    if (schoolPosition === "final") {
+        plannedStops.push(schoolAddress);
+    }
+
+    if (plannedStops.length === 0) {
+        mapContainer.innerHTML = "<div class='p-3 text-danger'>No hay puntos suficientes para construir la ruta.</div>";
+        return;
+    }
+
     let origin;
-    let destination = schoolAddress;
+    let destination;
     let waypoints = [];
 
-    if (addresses.length === 0) {
-        origin = schoolAddress;
-    } else if (addresses.length === 1) {
-        origin = addresses[0].direccion;
+    if (driverOrigin) {
+        origin = driverOrigin;
+        destination = plannedStops[plannedStops.length - 1];
+        waypoints = plannedStops.slice(0, -1).map((item) => ({
+            location: item,
+            stopover: true
+        }));
+    } else if (plannedStops.length === 1) {
+        origin = plannedStops[0];
+        destination = plannedStops[0];
     } else {
-        origin = addresses[0].direccion;
-        waypoints = addresses.slice(1).map((item) => ({
-            location: item.direccion,
+        origin = plannedStops[0];
+        destination = plannedStops[plannedStops.length - 1];
+        waypoints = plannedStops.slice(1, -1).map((item) => ({
+            location: item,
             stopover: true
         }));
     }
@@ -100,8 +136,8 @@ function initMap() {
             if (status === "OK") {
                 directionsRenderer.setDirections(response);
             } else {
-                console.error("DirectionsStatus:", status, { origin, destination, waypoints });
-                let detail = "Revisa que todas tengan formato: Via y numero, Ciudad, Departamento, Colombia.";
+                console.error("DirectionsStatus:", status, { origin, destination, waypoints, schoolPosition, driverOrigin });
+                let detail = "Revisa que las direcciones incluyan via y numero, junto con ciudad y departamento.";
                 if (status === "REQUEST_DENIED") {
                     detail = "Activa Directions API (Legacy) en Google Cloud para este mismo proyecto/API key, y reinicia el servidor.";
                 }

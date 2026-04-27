@@ -11,9 +11,42 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 import os
+import sqlite3
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+
+def _resolve_sqlite_db_path():
+    env_path = os.getenv("RUTASMART_DB_PATH")
+    if env_path:
+        return Path(env_path)
+
+    primary = BASE_DIR / "db.sqlite3"
+    fallback = BASE_DIR / "db_backup_try.sqlite3"
+    local_appdata = os.getenv("LOCALAPPDATA")
+    external_fallback = (
+        Path(local_appdata) / "RutaSmart" / "db.sqlite3" if local_appdata else None
+    )
+
+    def can_open(path):
+        if not path.exists():
+            return False
+        try:
+            connection = sqlite3.connect(path)
+            connection.execute("SELECT 1")
+            connection.close()
+            return True
+        except sqlite3.Error:
+            return False
+
+    if can_open(primary):
+        return primary
+    if external_fallback and can_open(external_fallback):
+        return external_fallback
+    if can_open(fallback):
+        return fallback
+    return primary
 
 SECRET_KEY = 'change-me'
 DEBUG = True
@@ -68,7 +101,7 @@ WSGI_APPLICATION = 'rutasmart_backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': _resolve_sqlite_db_path(),
     }
 }
 

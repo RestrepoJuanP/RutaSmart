@@ -8,7 +8,7 @@
         <div class="card shadow-sm border-0">
             <div class="card-body p-4">
                 <h2 class="h4 mb-3">Crear ruta</h2>
-                <p class="text-muted">Define la ruta y la direccion del colegio (siempre sera la parada final).</p>
+                <p class="text-muted">Define el origen del conductor y si el colegio va al inicio o al final del recorrido.</p>
 
                 <form method="post" class="vstack gap-3">
                     {% csrf_token %}
@@ -23,6 +23,16 @@
                         {% endif %}
                     </div>
                     <div>
+                        <label for="id_direccion_origen" class="form-label">Direccion de origen del conductor</label>
+                        {{ form.direccion_origen }}
+                        {% if form.direccion_origen.help_text %}
+                            <small class="text-muted d-block">{{ form.direccion_origen.help_text }}</small>
+                        {% endif %}
+                        {% if form.direccion_origen.errors %}
+                            <small class="text-danger">{{ form.direccion_origen.errors|striptags }}</small>
+                        {% endif %}
+                    </div>
+                    <div>
                         <label for="id_direccion_colegio" class="form-label">Direccion del colegio</label>
                         {{ form.direccion_colegio }}
                         {% if form.direccion_colegio.help_text %}
@@ -30,6 +40,16 @@
                         {% endif %}
                         {% if form.direccion_colegio.errors %}
                             <small class="text-danger">{{ form.direccion_colegio.errors|striptags }}</small>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <label for="id_posicion_colegio" class="form-label">Posicion del colegio en la ruta</label>
+                        {{ form.posicion_colegio }}
+                        {% if form.posicion_colegio.help_text %}
+                            <small class="text-muted d-block">{{ form.posicion_colegio.help_text }}</small>
+                        {% endif %}
+                        {% if form.posicion_colegio.errors %}
+                            <small class="text-danger">{{ form.posicion_colegio.errors|striptags }}</small>
                         {% endif %}
                     </div>
                     <div class="d-flex gap-2">

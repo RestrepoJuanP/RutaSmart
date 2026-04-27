@@ -24,12 +24,18 @@ def _is_valid_colombia_address(value):
 class RutaForm(forms.ModelForm):
     class Meta:
         model = Ruta
-        fields = ["nombre", "direccion_colegio"]
+        fields = ["nombre", "direccion_origen", "direccion_colegio", "posicion_colegio"]
         widgets = {
             "nombre": forms.TextInput(
                 attrs={
                     "class": "form-control",
                     "placeholder": "Ejemplo: Ruta Manana Colegio",
+                }
+            ),
+            "direccion_origen": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "Ejemplo: Parqueadero Los Colores, Medellin, Antioquia",
                 }
             ),
             "direccion_colegio": forms.TextInput(
@@ -38,10 +44,25 @@ class RutaForm(forms.ModelForm):
                     "placeholder": "Carrera 82 # 35-40, Calasanz, Medellin, Antioquia",
                 }
             ),
+            "posicion_colegio": forms.Select(
+                attrs={
+                    "class": "form-select",
+                }
+            )
         }
         help_texts = {
+            "direccion_origen": "Opcional. Punto desde donde inicia el conductor, como un parqueadero o su casa.",
             "direccion_colegio": f"{ADDRESS_FORMAT_HELP}. {ADDRESS_FORMAT_EXAMPLE}.",
+            "posicion_colegio": "Define si el colegio debe aparecer como primera parada o como destino final.",
         }
+
+    def clean_direccion_origen(self):
+        direccion = self.cleaned_data["direccion_origen"].strip()
+        if direccion and not _is_valid_colombia_address(direccion):
+            raise forms.ValidationError(
+                f"Direccion invalida. {ADDRESS_FORMAT_HELP}. {ADDRESS_FORMAT_EXAMPLE}."
+            )
+        return direccion
 
     def clean_direccion_colegio(self):
         direccion = self.cleaned_data["direccion_colegio"].strip()
