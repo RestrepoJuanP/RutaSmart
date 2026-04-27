@@ -11,13 +11,31 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 import os
+import shutil
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+
+def _default_database_path():
+    if os.name == "nt":
+        local_appdata = Path(os.getenv("LOCALAPPDATA", BASE_DIR))
+        target_dir = local_appdata / "RutaSmartData"
+    else:
+        target_dir = BASE_DIR / ".runtime"
+
+    target_dir.mkdir(parents=True, exist_ok=True)
+    target_path = target_dir / "db.sqlite3"
+    legacy_path = BASE_DIR / "db.sqlite3"
+
+    if not target_path.exists() and legacy_path.exists():
+        shutil.copyfile(legacy_path, target_path)
+
+    return target_path
+
 SECRET_KEY = 'change-me'
 DEBUG = True
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'testserver']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -68,9 +86,11 @@ WSGI_APPLICATION = 'rutasmart_backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': _default_database_path(),
     }
 }
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
 
 AUTH_USER_MODEL = 'accounts.User'
 
@@ -80,6 +100,7 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [BASE_DIR / 'static']
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
