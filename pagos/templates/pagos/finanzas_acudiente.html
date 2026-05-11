@@ -488,6 +488,7 @@
             <div class="comp-details">
               <p><strong>Acudiente:</strong> {{ c.acudiente_nombre }}</p>
               <p><strong>Estudiante:</strong> {{ c.estudiante_nombre }}</p>
+              <p><strong>Conductor:</strong> {{ c.conductor.full_name|default:"—" }}</p>
               {% if c.referencia_factura %}
                 <p><strong>Factura:</strong> {{ c.referencia_factura }}</p>
               {% endif %}
@@ -597,13 +598,15 @@
         <!-- Acudiente + Estudiante -->
         <div class="form-grid-2">
           <div>
-            <label class="form-label" for="{{ form.acudiente_nombre.id_for_label }}">
-              Acudiente <span class="form-required">*</span>
-            </label>
-            {{ form.acudiente_nombre }}
-            {% if form.acudiente_nombre.errors %}
-              <p class="form-error">{{ form.acudiente_nombre.errors|striptags }}</p>
-            {% endif %}
+            <label class="form-label">Acudiente</label>
+            <input
+              type="text"
+              class="form-control"
+              value="{{ request.user.full_name }}"
+              readonly
+              style="background-color: #f3f4f6; cursor: not-allowed;"
+            />
+            <p class="form-hint">Se toma automáticamente de tu cuenta.</p>
           </div>
           <div>
             <label class="form-label" for="{{ form.estudiante_nombre.id_for_label }}">
@@ -613,7 +616,22 @@
             {% if form.estudiante_nombre.errors %}
               <p class="form-error">{{ form.estudiante_nombre.errors|striptags }}</p>
             {% endif %}
+            {% if form.estudiante_nombre.help_text %}
+              <p class="form-hint">{{ form.estudiante_nombre.help_text }}</p>
+            {% endif %}
           </div>
+        </div>
+
+        <!-- Conductor a aprobar -->
+        <div class="form-group">
+          <label class="form-label" for="{{ form.conductor.id_for_label }}">
+            Conductor a aprobar <span class="form-required">*</span>
+          </label>
+          {{ form.conductor }}
+          {% if form.conductor.errors %}
+            <p class="form-error">{{ form.conductor.errors|striptags }}</p>
+          {% endif %}
+          <p class="form-hint">Selecciona el conductor que validará tu comprobante.</p>
         </div>
 
         <!-- Referencia factura -->

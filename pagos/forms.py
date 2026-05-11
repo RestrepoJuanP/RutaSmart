@@ -2,7 +2,10 @@ import re
 from pathlib import Path
 
 from django import forms
+
+from accounts.models import User
 from finanzas.models import ComprobantePago
+from students.models import Student
 
 
 class ComprobantePagoForm(forms.ModelForm):
@@ -17,32 +20,37 @@ class ComprobantePagoForm(forms.ModelForm):
         ),
     )
 
+    estudiante_nombre = forms.ChoiceField(
+        required=True,
+        label='Nombre del estudiante',
+        widget=forms.Select(attrs={'class': 'form-control'}),
+    )
+
+    conductor = forms.ModelChoiceField(
+        queryset=User.objects.none(),
+        required=True,
+        label='Conductor a aprobar',
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        empty_label='— Selecciona un conductor —',
+    )
+
     class Meta:
         model = ComprobantePago
         fields = [
             'mes_pago',
-            'acudiente_nombre',
             'estudiante_nombre',
+            'conductor',
             'monto',
             'referencia_factura',
             'archivo',
         ]
         labels = {
-            'acudiente_nombre': 'Nombre del acudiente',
             'estudiante_nombre': 'Nombre del estudiante',
             'monto': 'Monto depositado (en pesos)',
             'referencia_factura': 'Referencia de factura (opcional)',
             'archivo': 'Comprobante',
         }
         widgets = {
-            'acudiente_nombre': forms.TextInput(attrs={
-                'placeholder': 'Ej: María García',
-                'class': 'form-control',
-            }),
-            'estudiante_nombre': forms.TextInput(attrs={
-                'placeholder': 'Ej: Carlos García',
-                'class': 'form-control',
-            }),
             'monto': forms.NumberInput(attrs={
                 'placeholder': 'Ej: 250000',
                 'class': 'form-control',
@@ -54,6 +62,38 @@ class ComprobantePagoForm(forms.ModelForm):
                 'class': 'form-control',
             }),
         }
+
+    def __init__(self, *args, user=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.user = user
+
+        # Conductores activos disponibles para asignar
+        self.fields['conductor'].queryset = User.objects.filter(
+            role=User.Role.DRIVER, is_active=True
+        )
+
+        # Lista de estudiantes propios del acudiente
+        opciones_estudiantes = []
+        if user is not None:
+            opciones_estudiantes = list(
+                Student.objects.filter(owner=user, is_active=True).values_list(
+                    'full_name', 'full_name'
+                )
+            )
+
+        if opciones_estudiantes:
+            self.fields['estudiante_nombre'].choices = (
+                [('', '— Selecciona un estudiante —')] + opciones_estudiantes
+            )
+        else:
+            # Sin estudiantes registrados: deshabilitar y dar pista
+            self.fields['estudiante_nombre'].choices = [
+                ('', '— No tienes estudiantes registrados —')
+            ]
+            self.fields['estudiante_nombre'].widget.attrs['disabled'] = 'disabled'
+            self.fields['estudiante_nombre'].help_text = (
+                'Primero registra un estudiante en la sección Estudiantes.'
+            )
 
     def clean_mes_pago(self):
         mes = self.cleaned_data.get('mes_pago', '').strip()
@@ -82,6 +122,22 @@ class ComprobantePagoForm(forms.ModelForm):
             raise forms.ValidationError('El archivo no puede superar 5 MB.')
 
         return archivo
+
+    def clean_estudiante_nombre(self):
+        nombre = (self.cleaned_data.get('estudiante_nombre') or '').strip()
+        if not nombre:
+            raise forms.ValidationError('Debes seleccionar un estudiante.')
+
+        # Blindaje contra manipulación del POST: el nombre debe pertenecer
+        # a un estudiante activo del acudiente autenticado.
+        if self.user is not None and not Student.objects.filter(
+            owner=self.user, is_active=True, full_name=nombre
+        ).exists():
+            raise forms.ValidationError(
+                'El estudiante seleccionado no pertenece a tus estudiantes registrados.'
+            )
+
+        return nombre
 
     def save(self, commit=True):
         instance = super().save(commit=False)

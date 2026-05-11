@@ -42,6 +42,16 @@ def assign_students(request, pk):
 
     if request.method == "POST":
         selected_ids = request.POST.getlist("student_ids")
+
+        if not selected_ids and ruta.paradas.exists():
+            messages.warning(
+                request,
+                "No seleccionaste ningún estudiante. Si quieres dejar la ruta sin "
+                "paradas, primero deselecciona los estudiantes existentes manualmente "
+                "(la operación de vaciado total no se aplica desde este formulario).",
+            )
+            return redirect("ruta:assign_students", pk=ruta.pk)
+
         existing_orders = {parada.estudiante_id: parada.orden for parada in ruta.paradas.all()}
 
         nuevas_paradas = []

@@ -3,8 +3,15 @@ from django import forms
 from .models import Ruta
 
 
-ADDRESS_FORMAT_HELP = "Formato permitido: Via y numero, sector o barrio opcional, Ciudad, Departamento, con Colombia opcional"
-ADDRESS_FORMAT_EXAMPLE = "Ejemplo: Carrera 82 # 35-40, Calasanz, Medellin, Antioquia"
+ADDRESS_FORMAT_HELP = (
+    "Campos obligatorios: Vía y número, Ciudad y Departamento. "
+    "Sector o barrio es opcional. 'Colombia' al final es opcional."
+)
+ADDRESS_FORMAT_EXAMPLE = "Ejemplo: Carrera 82 # 35-40, Calasanz, Medellín, Antioquia"
+ADDRESS_FORMAT_ERROR = (
+    "La dirección debe incluir como mínimo Vía y número, Ciudad y Departamento, "
+    "separados por comas."
+)
 
 
 def _is_valid_colombia_address(value):
@@ -40,13 +47,13 @@ class RutaForm(forms.ModelForm):
             ),
         }
         help_texts = {
-            "direccion_colegio": f"{ADDRESS_FORMAT_HELP}. {ADDRESS_FORMAT_EXAMPLE}.",
+            "direccion_colegio": f"{ADDRESS_FORMAT_HELP} {ADDRESS_FORMAT_EXAMPLE}.",
         }
 
     def clean_direccion_colegio(self):
         direccion = self.cleaned_data["direccion_colegio"].strip()
         if not _is_valid_colombia_address(direccion):
             raise forms.ValidationError(
-                f"Direccion invalida. {ADDRESS_FORMAT_HELP}. {ADDRESS_FORMAT_EXAMPLE}."
+                f"{ADDRESS_FORMAT_ERROR} {ADDRESS_FORMAT_EXAMPLE}."
             )
         return direccion
