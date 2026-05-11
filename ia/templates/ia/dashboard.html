@@ -145,12 +145,12 @@
           <label class="form-label small fw-medium">Estudiante</label>
           <select class="form-select" id="student-select">
             <option value="">— Selecciona un estudiante —</option>
-            {% for item in rutas_data %}
-              {% for parada in item.ruta.paradas.all %}
-                <option value="{{ parada.estudiante.pk }}">
-                  {{ parada.estudiante.full_name }} ({{ parada.estudiante.address|truncatechars:35 }})
-                </option>
-              {% endfor %}
+            {% for estudiante in estudiantes_disponibles %}
+              <option value="{{ estudiante.pk }}">
+                {{ estudiante.full_name }} ({{ estudiante.address|truncatechars:35 }})
+              </option>
+            {% empty %}
+              <option value="" disabled>Aún no tienes estudiantes asignados a tus rutas.</option>
             {% endfor %}
           </select>
         </div>

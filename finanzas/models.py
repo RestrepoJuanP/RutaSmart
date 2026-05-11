@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 
 
@@ -9,6 +10,14 @@ class ComprobantePago(models.Model):
 
     acudiente_nombre = models.CharField(max_length=120)
     estudiante_nombre = models.CharField(max_length=120)
+    conductor = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        limit_choices_to={"role": "driver"},
+        related_name="comprobantes_recibidos",
+    )
     mes_pago = models.CharField(
         max_length=7,
         blank=True,

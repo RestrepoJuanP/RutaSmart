@@ -29,3 +29,21 @@ class StudentFormTests(TestCase):
         )
 
         self.assertTrue(form.is_valid(), form.errors.as_json())
+
+    def test_rejects_address_without_city_and_department(self):
+        form = StudentForm(
+            data={
+                "full_name": "Juan Perez",
+                "address": "Calle 50 #20-30",
+                "guardian_name": "Maria Perez",
+                "guardian_phone": "3001234567",
+                "guardian_email": "maria@example.com",
+            }
+        )
+
+        self.assertFalse(form.is_valid())
+        self.assertIn("address", form.errors)
+        mensaje = " ".join(form.errors["address"])
+        self.assertIn("Vía y número", mensaje)
+        self.assertIn("Ciudad", mensaje)
+        self.assertIn("Departamento", mensaje)

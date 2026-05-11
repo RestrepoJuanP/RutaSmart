@@ -32,7 +32,23 @@ def ia_dashboard(request):
         ia_obj, _ = RutaIA.objects.get_or_create(ruta=ruta)
         rutas_data.append({"ruta": ruta, "ia": ia_obj})
 
-    return render(request, "ia/dashboard.html", {"rutas_data": rutas_data})
+    estudiantes_disponibles = (
+        Student.objects.filter(
+            rutas_asignadas__ruta__conductor=request.user,
+            is_active=True,
+        )
+        .distinct()
+        .order_by("full_name")
+    )
+
+    return render(
+        request,
+        "ia/dashboard.html",
+        {
+            "rutas_data": rutas_data,
+            "estudiantes_disponibles": estudiantes_disponibles,
+        },
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -135,7 +151,13 @@ def recomendar_ruta(request, student_id):
     similitud coseno entre el embedding de su dirección y las
     descripciones vectorizadas de las rutas activas del conductor.
     """
-    estudiante = get_object_or_404(Student, pk=student_id, owner=request.user)
+    estudiante = get_object_or_404(
+        Student.objects.filter(
+            rutas_asignadas__ruta__conductor=request.user,
+            is_active=True,
+        ).distinct(),
+        pk=student_id,
+    )
 
     # Solo rutas con embedding generado
     rutas_ia = RutaIA.objects.filter(

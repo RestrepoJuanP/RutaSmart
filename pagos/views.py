@@ -13,7 +13,7 @@ def finanzas_acudiente(request):
     mes = request.GET.get("mes", "")
 
     if request.method == "POST":
-        form = ComprobantePagoForm(request.POST, request.FILES)
+        form = ComprobantePagoForm(request.POST, request.FILES, user=request.user)
         if form.is_valid():
             comprobante = form.save(commit=False)
             comprobante.acudiente_nombre = request.user.full_name
@@ -25,7 +25,7 @@ def finanzas_acudiente(request):
             return redirect("pagos:finanzas_acudiente")
         form_has_errors = True
     else:
-        form = ComprobantePagoForm(initial={"acudiente_nombre": request.user.full_name})
+        form = ComprobantePagoForm(user=request.user)
 
     qs = ComprobantePago.objects.filter(acudiente_nombre=request.user.full_name)
     if mes:
