@@ -1,159 +1,512 @@
-# RutaSmart
+# 🚍 RutaSmart
 
-RutaSmart es una aplicación web desarrollada con **Django** para apoyar la gestión del transporte escolar. En el estado actual del proyecto se integraron en una sola base de código los módulos desarrollados a partir de las historias de usuario del equipo, con una estructura unificada de proyecto para facilitar su ejecución, mantenimiento y posterior despliegue.
+Sistema web inteligente para la gestión de rutas de transporte escolar desarrollado con Django.
 
-## Estado actual del proyecto
+RutaSmart centraliza la administración de estudiantes, conductores, vehículos, rutas escolares, pagos y finanzas en una sola plataforma. Además, incorpora funcionalidades de Inteligencia Artificial con OpenAI para generar descripciones automáticas y recomendaciones inteligentes de rutas.
 
-En esta versión se consolidó un único proyecto Django con los siguientes módulos principales:
+---
 
-- **accounts**: registro, inicio de sesión, cierre de sesión y dashboards por rol.
-- **students**: registro, edición, visualización y desactivación lógica de estudiantes.
-- **vehiculo**: registro y listado de vehículos.
-- **conductor**: entidades de apoyo relacionadas con el conductor.
-- **finanzas**: dashboard financiero, historial de comprobantes, registro e historial de gastos.
-- **pagos**: carga y consulta de comprobantes de pago por parte del acudiente.
+# 📌 Tabla de contenido
 
-## Tecnologías utilizadas
+- [Características principales](#-características-principales)
+- [Arquitectura del proyecto](#-arquitectura-del-proyecto)
+- [Tecnologías utilizadas](#-tecnologías-utilizadas)
+- [Módulos del sistema](#-módulos-del-sistema)
+- [Estructura del proyecto](#-estructura-del-proyecto)
+- [Instalación y configuración](#-instalación-y-configuración)
+- [Variables de entorno](#-variables-de-entorno)
+- [Ejecución del proyecto](#-ejecución-del-proyecto)
+- [Roles del sistema](#-roles-del-sistema)
+- [Integración con IA](#-integración-con-ia)
+- [Flujo general de uso](#-flujo-general-de-uso)
+- [Comandos útiles](#-comandos-útiles)
+- [Problemas comunes](#-problemas-comunes)
+- [Buenas prácticas implementadas](#-buenas-prácticas-implementadas)
+- [Mejoras futuras sugeridas](#-mejoras-futuras-sugeridas)
+- [Autores](#-autores)
 
-- Python 3.11 o superior
-- Django 5.1+
+---
+
+# ✨ Características principales
+
+✅ Sistema de autenticación personalizado por roles.
+
+✅ Gestión de estudiantes y acudientes.
+
+✅ Administración de conductores y vehículos.
+
+✅ Creación y organización de rutas escolares.
+
+✅ Gestión financiera y control de gastos.
+
+✅ Carga y validación de comprobantes de pago.
+
+✅ Generación automática de descripciones de rutas con IA.
+
+✅ Sistema de recomendación inteligente de rutas usando embeddings.
+
+✅ Arquitectura modular basada en aplicaciones Django.
+
+---
+
+# 🏗 Arquitectura del proyecto
+
+El proyecto sigue una arquitectura monolítica modular basada en Django Apps.
+
+Cada módulo encapsula una funcionalidad específica del sistema:
+
+| Aplicación | Responsabilidad |
+|---|---|
+| `accounts` | Usuarios, autenticación y roles |
+| `students` | Gestión de estudiantes |
+| `conductor` | Información de conductores |
+| `vehiculo` | Administración de vehículos |
+| `ruta` | Gestión de rutas escolares |
+| `pagos` | Subida de comprobantes |
+| `finanzas` | Gestión financiera y validaciones |
+| `ia` | Integración con OpenAI y embeddings |
+
+---
+
+# 🧰 Tecnologías utilizadas
+
+## Backend
+
+- Python 3.11+
+- Django 5+
 - SQLite3
-- HTML5
-- Bootstrap 5 (vía CDN en plantillas)
+- OpenAI API
 
-## Estructura general del proyecto
+## Frontend
+
+- HTML5
+- CSS3
+- Bootstrap 5
+- JavaScript
+
+## Inteligencia Artificial
+
+- GPT-4o-mini
+- DALL·E 3
+- text-embedding-3-small
+
+---
+
+# 📦 Módulos del sistema
+
+## 🔐 Accounts
+
+Sistema de autenticación personalizado basado en correo electrónico.
+
+Incluye:
+
+- Login
+- Logout
+- Gestión de roles
+- Dashboard según el tipo de usuario
+
+Roles implementados:
+
+- Administrador
+- Conductor
+- Padre/Estudiante
+
+---
+
+## 👨‍🎓 Students
+
+Permite administrar estudiantes registrados dentro del sistema.
+
+Funciones:
+
+- Registrar estudiantes
+- Editar información
+- Desactivación lógica
+- Gestión de acudientes
+- Asociación con usuarios
+
+---
+
+## 🚐 Vehículo
+
+Administra la flota vehicular.
+
+Funciones:
+
+- Registro de vehículos
+- Asociación conductor ↔ vehículo
+- Gestión de combustible
+- Gestión de transmisión
+- Validaciones básicas
+
+---
+
+## 🛣 Ruta
+
+Módulo principal para administración de rutas escolares.
+
+Funciones:
+
+- Crear rutas
+- Definir colegio destino
+- Organizar paradas
+- Asignar estudiantes
+- Ordenar recorridos
+
+---
+
+## 💰 Finanzas
+
+Módulo financiero del sistema.
+
+Funciones:
+
+- Registro de gastos
+- Gestión de categorías
+- Validación de pagos
+- Historial financiero
+- Gestión de comprobantes
+
+---
+
+## 💳 Pagos
+
+Permite a los acudientes cargar comprobantes de pago.
+
+Funciones:
+
+- Subir archivos
+- Consultar estado del pago
+- Seguimiento de validaciones
+
+Estados posibles:
+
+- Pendiente
+- Aprobado
+- Rechazado
+
+---
+
+## 🤖 IA
+
+Módulo de Inteligencia Artificial integrado con OpenAI.
+
+Funciones:
+
+### Generación automática de descripciones
+
+Genera descripciones de rutas usando GPT-4o-mini.
+
+### Generación de imágenes
+
+Genera ilustraciones representativas usando DALL·E 3.
+
+### Sistema de recomendaciones
+
+Utiliza embeddings para recomendar rutas compatibles con estudiantes según dirección y contexto.
+
+---
+
+# 📁 Estructura del proyecto
 
 ```text
 RutaSmart/
+│
 ├── accounts/
 ├── conductor/
 ├── finanzas/
-├── media/
+├── ia/
 ├── pagos/
+├── ruta/
 ├── rutasmart_backend/
 ├── students/
-├── templates/
 ├── vehiculo/
-├── .gitignore
+├── static/
+├── templates/
+├── media/
+│
 ├── manage.py
-├── README.md
-└── requirements.txt
+├── requirements.txt
+└── README.md
 ```
 
-## Requisitos previos
+---
 
-Antes de ejecutar el proyecto, asegúrate de tener instalado:
+# ⚙ Instalación y configuración
 
-- **Python 3.11 o superior**
-- **pip**
-- Un entorno virtual recomendado (`venv`)
-
-## Instalación y ejecución
-
-### 1. Clonar el repositorio
+## 1. Clonar el repositorio
 
 ```bash
-git clone <URL_DEL_REPOSITORIO>
+git clone https://github.com/RestrepoJuanP/RutaSmart.git
 cd RutaSmart
 ```
 
-### 2. Crear y activar entorno virtual
+---
 
-#### En Windows (PowerShell)
+## 2. Crear entorno virtual
+
+### Windows PowerShell
 
 ```powershell
 python -m venv venv
 .\venv\Scripts\Activate.ps1
 ```
 
-#### En Windows (cmd)
+### Windows CMD
 
-```bat
+```cmd
 python -m venv venv
 venv\Scripts\activate
 ```
 
-#### En Linux / macOS
+### Linux / macOS
 
 ```bash
 python3 -m venv venv
 source venv/bin/activate
 ```
 
-### 3. Instalar dependencias
+---
+
+## 3. Instalar dependencias
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 4. Aplicar migraciones
+---
+
+## 4. Configurar variables de entorno
+
+Crear un archivo `.env` en la raíz del proyecto:
+
+```env
+OPENAI_API_KEY=tu_api_key
+GOOGLE_MAPS_API_KEY=tu_google_maps_key
+SECRET_KEY=django_secret_key
+DEBUG=True
+```
+
+---
+
+## 5. Aplicar migraciones
 
 ```bash
 python manage.py makemigrations
 python manage.py migrate
 ```
 
-### 5. Crear superusuario (opcional)
+---
+
+## 6. Crear superusuario
 
 ```bash
 python manage.py createsuperuser
 ```
 
-### 6. Ejecutar el servidor
+---
+
+## 7. Ejecutar servidor
 
 ```bash
 python manage.py runserver
 ```
 
-Luego abre en el navegador:
+Abrir en el navegador:
 
 ```text
 http://127.0.0.1:8000/
 ```
 
-## Rutas principales
+---
 
-Dependiendo de la configuración actual de `rutasmart_backend/urls.py`, la aplicación integra las siguientes rutas base:
+# 🔐 Variables de entorno
 
-- `/` → página principal / autenticación
-- `/admin/` → panel de administración de Django
-- `/students/` → gestión de estudiantes
-- `/vehiculos/` → gestión de vehículos
-- `/finanzas/` → dashboard e historial financiero
-- `/pagos/` → carga y consulta de comprobantes de pago
-
-## Archivos importantes
-
-- `manage.py`: punto de entrada principal del proyecto.
-- `rutasmart_backend/settings.py`: configuración general del proyecto.
-- `rutasmart_backend/urls.py`: enrutamiento principal.
-- `templates/`: plantillas compartidas del proyecto.
-- `media/`: archivos cargados por usuarios, como comprobantes o facturas.
-
-## Buenas prácticas adoptadas en esta integración
-
-- Se dejó **un solo proyecto Django principal**.
-- Se eliminaron bases de datos locales duplicadas del repositorio.
-- Se ignoraron archivos generados automáticamente mediante `.gitignore`.
-- Se unificó la estructura de plantillas por aplicación.
-- Se organizó el proyecto para que los módulos queden accesibles desde una sola aplicación funcional.
-
-## Notas importantes
-
-- La base de datos `db.sqlite3` **no debe subirse al repositorio**.
-- Las carpetas `__pycache__` y archivos `.pyc` tampoco deben versionarse.
-- Si se modifica la estructura de modelos, se deben volver a generar migraciones.
-- En futuras iteraciones se recomienda fortalecer la integración entre roles, navegación entre módulos y validaciones de negocio.
-
-## Equipo y contexto
-
-Este proyecto hace parte del desarrollo académico de **RutaSmart**, una solución enfocada en la digitalización y organización de procesos de transporte escolar.
+| Variable | Descripción |
+|---|---|
+| `OPENAI_API_KEY` | API Key de OpenAI |
+| `GOOGLE_MAPS_API_KEY` | API Key de Google Maps |
+| `SECRET_KEY` | Clave secreta de Django |
+| `DEBUG` | Modo desarrollo |
 
 ---
 
-Si el proyecto presenta errores al iniciar, verifica primero:
+# 👥 Roles del sistema
 
-1. que el entorno virtual esté activo,
-2. que las dependencias estén instaladas,
-3. que las migraciones se hayan aplicado correctamente,
-4. y que la configuración en `settings.py` y `urls.py` corresponda a la estructura final integrada.
+## 👑 Administrador
+
+- Gestión global del sistema
+- Validación de pagos
+- Administración financiera
+- Gestión de rutas
+- Gestión de estudiantes
+
+## 🚐 Conductor
+
+- Visualización de rutas asignadas
+- Gestión de recorridos
+- Consulta de estudiantes
+
+## 👨‍👩‍👦 Padre / Estudiante
+
+- Consulta de pagos
+- Carga de comprobantes
+- Visualización de información relacionada
+
+---
+
+# 🤖 Integración con IA
+
+RutaSmart integra servicios de OpenAI mediante el módulo `ia/services.py`.
+
+## Funcionalidades implementadas
+
+### GPT-4o-mini
+
+- Generación automática de descripciones de rutas.
+
+### DALL·E 3
+
+- Generación de imágenes representativas de rutas escolares.
+
+### Embeddings
+
+- Sistema de recomendación inteligente.
+- Comparación semántica entre rutas y estudiantes.
+
+---
+
+# 🔄 Flujo general de uso
+
+```text
+Administrador
+    ↓
+Registra conductores y vehículos
+    ↓
+Crea rutas escolares
+    ↓
+Asigna estudiantes
+    ↓
+Padres suben comprobantes
+    ↓
+Sistema financiero valida pagos
+    ↓
+IA recomienda rutas óptimas
+```
+
+---
+
+# 🛠 Comandos útiles
+
+## Crear migraciones
+
+```bash
+python manage.py makemigrations
+```
+
+## Aplicar migraciones
+
+```bash
+python manage.py migrate
+```
+
+## Ejecutar servidor
+
+```bash
+python manage.py runserver
+```
+
+## Crear superusuario
+
+```bash
+python manage.py createsuperuser
+```
+
+## Recolectar archivos estáticos
+
+```bash
+python manage.py collectstatic
+```
+
+---
+
+# ⚠ Problemas comunes
+
+## Error: OPENAI_API_KEY no encontrada
+
+Solución:
+
+Verificar que exista el archivo `.env` y que la variable esté correctamente definida.
+
+---
+
+## Error al aplicar migraciones
+
+Ejecutar:
+
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
+
+---
+
+## Error de dependencias
+
+Actualizar pip e instalar nuevamente:
+
+```bash
+pip install --upgrade pip
+pip install -r requirements.txt
+```
+
+---
+
+# ✅ Buenas prácticas implementadas
+
+- Arquitectura modular.
+- Uso de variables de entorno.
+- Modelo de usuario personalizado.
+- Separación por aplicaciones.
+- Uso de relaciones ORM.
+- Validaciones en modelos.
+- Organización de archivos estáticos y media.
+- Manejo de roles y permisos.
+
+---
+
+# 🚀 Mejoras futuras sugeridas
+
+- Integración completa con Google Maps.
+- Optimización automática de rutas.
+- Panel analítico con métricas.
+- Notificaciones en tiempo real.
+- API REST con Django REST Framework.
+- Despliegue en Docker.
+- Migración a PostgreSQL.
+- Tests automatizados.
+- CI/CD con GitHub Actions.
+- Sistema de geolocalización en tiempo real.
+
+---
+
+# 👨‍💻 Autores
+
+Proyecto académico desarrollado como parte de RutaSmart.
+
+Equipo de trabajo:
+
+- Juan Pablo Restrepo Restrepo (Scrum Master)
+- Tomas Sepulveda Franco (Desarrollador Full-stack)
+- Julian Jimenez Garcia (Desarrollador Front-end)
+- Miguel Angel Ortiz Puerta (Desarrollador Back-end)
+- Miguel Angel Garcia Osorio (Diseñador UI/UX)
+- Samuel Herrera Galvis (QA Engineer y Desarrollador Full-stack)
+
+Desarrollado con Django y OpenAI.
+
+---
+
+# 📄 Licencia
+
+Este proyecto fue desarrollado con fines académicos y educativos.
