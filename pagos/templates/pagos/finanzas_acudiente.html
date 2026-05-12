@@ -20,7 +20,7 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  background: #2A6DF4;
+  background: var(--rs-blue);
   color: #fff;
   border: none;
   border-radius: 10px;
@@ -34,7 +34,7 @@
   white-space: nowrap;
   flex-shrink: 0;
 }
-.btn-primary:hover { background: #2563EB; }
+.btn-primary:hover { background: #076ed1; }
 .btn-primary svg { flex-shrink: 0; }
 
 /* ─── Stats row ─── */
@@ -63,7 +63,7 @@
   justify-content: center;
   flex-shrink: 0;
 }
-.si-blue   { background: rgba(42,109,244,.1);  color: #2A6DF4; }
+.si-blue   { background: rgba(11,131,246,.1);  color: var(--rs-blue); }
 .si-green  { background: rgba(52,199,89,.1);   color: #34C759; }
 .si-yellow { background: rgba(255,204,0,.18);  color: #B8860B; }
 .si-red    { background: rgba(255,59,48,.1);   color: #FF3B30; }
@@ -101,7 +101,7 @@
   color: #1F2937;
   transition: border-color 0.15s;
 }
-.filter-input:focus { outline: none; border-color: #2A6DF4; }
+.filter-input:focus { outline: none; border-color: var(--rs-blue); }
 .btn-filter {
   border: 1px solid #D1D5DB;
   border-radius: 8px;
@@ -156,8 +156,8 @@
   height: 48px;
   border-radius: 10px;
   flex-shrink: 0;
-  background: rgba(42,109,244,.1);
-  color: #2A6DF4;
+  background: rgba(11,131,246,.1);
+  color: var(--rs-blue);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -321,7 +321,7 @@
   transition: border-color 0.15s, background 0.15s;
   position: relative;
 }
-.file-zone:hover { border-color: #2A6DF4; background: rgba(42,109,244,.03); }
+.file-zone:hover { border-color: var(--rs-blue); background: rgba(11,131,246,.03); }
 .file-zone input[type="file"] {
   position: absolute;
   inset: 0;
@@ -333,7 +333,7 @@
 .file-zone-icon { color: #9CA3AF; margin-bottom: 0.5rem; }
 .file-zone-label { font-size: 0.9rem; font-weight: 600; color: #374151; margin-bottom: 0.2rem; }
 .file-zone-hint { font-size: 0.78rem; color: #9CA3AF; }
-.file-zone-name { font-size: 0.82rem; color: #2A6DF4; font-weight: 600; margin-top: 0.5rem; display: none; }
+.file-zone-name { font-size: 0.82rem; color: var(--rs-blue); font-weight: 600; margin-top: 0.5rem; display: none; }
 
 .modal-footer {
   display: flex;

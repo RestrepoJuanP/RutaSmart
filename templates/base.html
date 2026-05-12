@@ -1,16 +1,103 @@
 ﻿<!doctype html>
+{% load static %}
 <html lang="es">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}RutaSmart{% endblock title %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <style>
+        :root {
+            --rs-navy: #06245c;
+            --rs-blue: #0b83f6;
+            --rs-sky: #13a0ea;
+            --rs-green: #86e95b;
+            --rs-yellow: #ffd95a;
+            --rs-ink: #021d49;
+            --rs-muted: #6b7280;
+            --rs-surface: #f5f8fc;
+            --bs-primary: var(--rs-blue);
+            --bs-primary-rgb: 11, 131, 246;
+            --bs-link-color: var(--rs-blue);
+            --bs-link-hover-color: var(--rs-navy);
+        }
+
+        body {
+            background: var(--rs-surface);
+            color: var(--rs-ink);
+        }
+
+        .rs-navbar {
+            background: var(--rs-navy);
+            box-shadow: 0 2px 12px rgba(2, 29, 73, 0.16);
+        }
+
+        .btn-primary {
+            --bs-btn-bg: var(--rs-blue);
+            --bs-btn-border-color: var(--rs-blue);
+            --bs-btn-hover-bg: #076ed1;
+            --bs-btn-hover-border-color: #076ed1;
+            --bs-btn-active-bg: var(--rs-navy);
+            --bs-btn-active-border-color: var(--rs-navy);
+        }
+
+        .btn-outline-primary {
+            --bs-btn-color: var(--rs-blue);
+            --bs-btn-border-color: var(--rs-blue);
+            --bs-btn-hover-bg: var(--rs-blue);
+            --bs-btn-hover-border-color: var(--rs-blue);
+        }
+
+        .bg-primary {
+            background-color: var(--rs-blue) !important;
+        }
+
+        .text-primary {
+            color: var(--rs-blue) !important;
+        }
+
+        .rs-navbar .container {
+            gap: 1rem;
+        }
+
+        .rs-brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.55rem;
+            min-height: 58px;
+            padding: 0.25rem 0.7rem;
+            border-radius: 8px;
+            background: #fff;
+        }
+
+        .rs-brand-logo {
+            display: block;
+            width: auto;
+            height: 46px;
+        }
+
+        .rs-brand-text {
+            color: var(--rs-ink);
+            font-weight: 800;
+            letter-spacing: 0;
+            line-height: 1;
+        }
+
+        @media (max-width: 576px) {
+            .rs-brand-logo {
+                height: 40px;
+            }
+        }
+    </style>
     {% block extra_styles %}{% endblock %}
 </head>
 <body class="bg-light">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <nav class="navbar navbar-expand-lg navbar-dark rs-navbar">
         <div class="container">
-            <a class="navbar-brand fw-bold" href="{% url 'accounts:home' %}">RutaSmart</a>
+            <a class="navbar-brand rs-brand m-0" href="{% url 'accounts:home' %}" aria-label="Inicio RutaSmart">
+                <img class="rs-brand-logo" src="{% static 'img/logo-rutasmart-mark.png' %}" alt="">
+                <span class="rs-brand-text">RutaSmart</span>
+            </a>
             <div class="d-flex align-items-center gap-2 flex-wrap">
                 {% if user.is_authenticated %}
                     {% if user.role == 'driver' %}

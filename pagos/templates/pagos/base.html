@@ -1,18 +1,30 @@
 <!doctype html>
+{% load static %}
 <html lang="es">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{% block title %}RutaSmart{% endblock %}</title>
   <style>
+    :root {
+      --rs-navy: #06245c;
+      --rs-blue: #0b83f6;
+      --rs-sky: #13a0ea;
+      --rs-green: #86e95b;
+      --rs-yellow: #ffd95a;
+      --rs-ink: #021d49;
+      --rs-muted: #6b7280;
+      --rs-surface: #f5f8fc;
+    }
+
     /* ─── Reset ─── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     /* ─── Base ─── */
     body {
       font-family: "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
-      background: #F5F7FA;
-      color: #1F2937;
+      background: var(--rs-surface);
+      color: var(--rs-ink);
       min-height: 100vh;
     }
 
@@ -39,18 +51,18 @@
       gap: 0.75rem;
     }
     .rs-logo {
-      width: 40px;
-      height: 40px;
-      border-radius: 10px;
-      background: #2A6DF4;
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      font-size: 0.85rem;
+      width: auto;
+      height: 42px;
+      display: block;
       flex-shrink: 0;
-      letter-spacing: -0.5px;
+    }
+    .rs-logo-wrap {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.2rem 0.55rem;
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: 0 1px 6px rgba(2, 29, 73, 0.08);
     }
     .rs-brand-name {
       font-size: 1rem;
@@ -116,8 +128,8 @@
     }
     .form-control:focus {
       outline: none;
-      border-color: #2A6DF4;
-      box-shadow: 0 0 0 3px rgba(42,109,244,.12);
+      border-color: var(--rs-blue);
+      box-shadow: 0 0 0 3px rgba(11,131,246,.12);
     }
 
     {% block extra_styles %}{% endblock %}
@@ -128,7 +140,9 @@
   <header class="rs-header">
     <div class="rs-header-inner">
       <div class="rs-brand">
-        <div class="rs-logo">RS</div>
+        <div class="rs-logo-wrap">
+          <img class="rs-logo" src="{% static 'img/logo-rutasmart-mark.png' %}" alt="">
+        </div>
         <div>
           <div class="rs-brand-name">RutaSmart</div>
           <div>

@@ -18,7 +18,7 @@ def _dashboard_for(user):
 def home(request):
     if request.user.is_authenticated:
         return redirect(_dashboard_for(request.user))
-    return render(request, "accounts/home.html")
+    return redirect("accounts:login")
 
 
 def register_view(request):
