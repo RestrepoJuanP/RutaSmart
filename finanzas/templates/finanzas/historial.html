@@ -34,11 +34,11 @@
           <td class="text-end fw-semibold">${{ c.monto|floatformat:0 }}</td>
           <td>
             {% if c.estado == 'pendiente' %}
-              <span class="badge badge-warning">Pendiente</span>
+              <span class="badge bg-warning text-dark">Pendiente</span>
             {% elif c.estado == 'aprobado' %}
-              <span class="badge badge-success">Aprobado</span>
+              <span class="badge bg-success">Aprobado</span>
             {% else %}
-              <span class="badge badge-danger">Rechazado</span>
+              <span class="badge bg-danger">Rechazado</span>
             {% endif %}
           </td>
           <td>{{ c.fecha_subida|date:"d/m/Y H:i" }}</td>
