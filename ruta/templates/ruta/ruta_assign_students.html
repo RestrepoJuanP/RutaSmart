@@ -33,6 +33,7 @@
                             <tr>
                                 <th>Asignar</th>
                                 <th>Estudiante</th>
+                                <th>Colegio</th>
                                 <th>Direccion</th>
                                 <th>Acudiente</th>
                                 <th>Orden</th>
@@ -50,6 +51,7 @@
                                     >
                                 </td>
                                 <td>{{ row.student.full_name }}</td>
+                                <td>{{ row.student.school_name|default:"-" }}</td>
                                 <td>{{ row.student.address }}</td>
                                 <td>{{ row.student.owner.full_name }}</td>
                                 <td style="max-width: 120px;">

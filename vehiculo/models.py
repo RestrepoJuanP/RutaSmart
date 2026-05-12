@@ -1,3 +1,4 @@
+from django.core.validators import MinValueValidator
 from django.db import models
 from conductor.models import Conductor
 
@@ -23,7 +24,7 @@ class Vehiculo(models.Model):
     linea = models.CharField(max_length=200)
     modelo = models.PositiveIntegerField() 
     color = models.CharField(max_length=50)
-    num_asientos = models.PositiveIntegerField() 
+    num_asientos = models.PositiveIntegerField(validators=[MinValueValidator(4)]) 
 
     combustible = models.CharField(
         max_length=20,

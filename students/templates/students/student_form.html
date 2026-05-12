@@ -22,6 +22,11 @@
                     </div>
 
                     <div class="mb-3">
+                        <label class="form-label">Colegio</label>
+                        {{ form.school_name }}
+                    </div>
+
+                    <div class="mb-3">
                         <label class="form-label">Dirección</label>
                         {{ form.address }}
                         {% if form.address.help_text %}

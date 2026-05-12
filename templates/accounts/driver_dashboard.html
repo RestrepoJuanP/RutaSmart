@@ -47,5 +47,17 @@
             </div>
         </div>
     </div>
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <h2 class="h5">Panel IA</h2>
+                <p class="text-secondary">Genera descripciones, ilustraciones y recomendaciones inteligentes para tus rutas.</p>
+                <div class="d-flex gap-2">
+                    <a href="{% url 'ia:dashboard' %}" class="btn btn-info text-white">Ir al panel IA</a>
+                    <a href="{% url 'ia:dashboard' %}" class="btn btn-outline-info">Abrir herramientas IA</a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock content %}

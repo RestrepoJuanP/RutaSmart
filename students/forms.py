@@ -40,6 +40,7 @@ class StudentForm(forms.ModelForm):
         model = Student
         fields = [
             "full_name",
+            "school_name",
             "address",
             "guardian_name",
             "guardian_phone",
@@ -49,6 +50,10 @@ class StudentForm(forms.ModelForm):
             "full_name": forms.TextInput(attrs={
                 "class": "form-control",
                 "placeholder": "Ingrese el nombre completo del estudiante"
+            }),
+            "school_name": forms.TextInput(attrs={
+                "class": "form-control",
+                "placeholder": "Ingrese el nombre del colegio"
             }),
             "address": forms.TextInput(attrs={
                 "class": "form-control",

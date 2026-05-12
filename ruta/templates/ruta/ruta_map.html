@@ -16,24 +16,31 @@
         <div class="card shadow-sm border-0 h-100">
             <div class="card-body">
                 <h3 class="h6">Recorrido configurado</h3>
-                {% if ruta.direccion_origen %}
-                    <div class="alert alert-secondary py-2">
-                        <strong>Origen del conductor:</strong><br>
-                        {{ ruta.direccion_origen }}
-                    </div>
-                {% endif %}
+                <p class="text-muted small mb-3">
+                    El mapa se calcula en el mismo orden mostrado abajo. Google no reordena las paradas; solo traza el camino vial entre cada punto.
+                </p>
 
-                {% if recorrido %}
+                {% if ordered_points %}
                     <ol class="mb-3">
-                        {% for punto in recorrido %}
+                        {% for punto in ordered_points %}
                             <li class="mb-2">
                                 <strong>{{ punto.nombre }}</strong><br>
                                 <span class="text-muted small">{{ punto.direccion }}</span>
+                                {% if punto.tipo == "estudiante" and punto.colegio %}
+                                    <br><span class="badge text-bg-light border">Colegio: {{ punto.colegio }}</span>
+                                {% endif %}
                             </li>
                         {% endfor %}
                     </ol>
                 {% else %}
                     <p class="text-muted">No hay puntos configurados en esta ruta.</p>
+                {% endif %}
+                {% if route_warnings %}
+                    {% for warning in route_warnings %}
+                        <div class="alert alert-warning py-2">
+                            {{ warning }}
+                        </div>
+                    {% endfor %}
                 {% endif %}
                 <div class="alert alert-success py-2 mb-0">
                     <strong>Posicion del colegio:</strong><br>
@@ -51,10 +58,7 @@
     </div>
 </div>
 
-{{ addresses|json_script:"route-addresses" }}
-{{ ruta.direccion_colegio|json_script:"school-address" }}
-{{ ruta.direccion_origen|json_script:"driver-origin" }}
-{{ ruta.posicion_colegio|json_script:"school-position" }}
+{{ ordered_points|json_script:"ordered-route-points" }}
 
 {% if not google_maps_api_key %}
 <div class="alert alert-warning">
@@ -66,6 +70,10 @@
 {% block extra_scripts %}
 {{ block.super }}
 <script>
+function normalizeAddress(value) {
+    return (value || "").trim().toLowerCase().replace(/\s+/g, " ");
+}
+
 function initMap() {
     const mapContainer = document.getElementById("map");
     const map = new google.maps.Map(mapContainer, {
@@ -73,29 +81,29 @@ function initMap() {
         center: { lat: 4.711, lng: -74.0721 }
     });
 
-    const addresses = JSON.parse(document.getElementById("route-addresses").textContent || "[]");
-    const schoolAddress = JSON.parse(document.getElementById("school-address").textContent || '""');
-    const driverOrigin = JSON.parse(document.getElementById("driver-origin").textContent || '""');
-    const schoolPosition = JSON.parse(document.getElementById("school-position").textContent || '"final"');
-
-    if (!schoolAddress) {
-        mapContainer.innerHTML = "<div class='p-3 text-danger'>No se definio la direccion del colegio.</div>";
-        return;
-    }
+    const orderedPoints = JSON.parse(document.getElementById("ordered-route-points").textContent || "[]");
 
     const directionsService = new google.maps.DirectionsService();
     const directionsRenderer = new google.maps.DirectionsRenderer({ map: map, suppressMarkers: false });
+    const routingAddresses = [];
 
-    const plannedStops = [];
-    if (schoolPosition === "inicio") {
-        plannedStops.push(schoolAddress);
-    }
-    addresses.forEach((item) => plannedStops.push(item.direccion));
-    if (schoolPosition === "final") {
-        plannedStops.push(schoolAddress);
-    }
+    orderedPoints.forEach((point) => {
+        const address = (point.direccion || "").trim();
+        if (!address) {
+            return;
+        }
 
-    if (plannedStops.length === 0) {
+        const normalized = normalizeAddress(address);
+        const lastNormalized = routingAddresses.length
+            ? normalizeAddress(routingAddresses[routingAddresses.length - 1])
+            : "";
+
+        if (normalized && normalized !== lastNormalized) {
+            routingAddresses.push(address);
+        }
+    });
+
+    if (routingAddresses.length === 0) {
         mapContainer.innerHTML = "<div class='p-3 text-danger'>No hay puntos suficientes para construir la ruta.</div>";
         return;
     }
@@ -104,20 +112,13 @@ function initMap() {
     let destination;
     let waypoints = [];
 
-    if (driverOrigin) {
-        origin = driverOrigin;
-        destination = plannedStops[plannedStops.length - 1];
-        waypoints = plannedStops.slice(0, -1).map((item) => ({
-            location: item,
-            stopover: true
-        }));
-    } else if (plannedStops.length === 1) {
-        origin = plannedStops[0];
-        destination = plannedStops[0];
+    if (routingAddresses.length === 1) {
+        origin = routingAddresses[0];
+        destination = routingAddresses[0];
     } else {
-        origin = plannedStops[0];
-        destination = plannedStops[plannedStops.length - 1];
-        waypoints = plannedStops.slice(1, -1).map((item) => ({
+        origin = routingAddresses[0];
+        destination = routingAddresses[routingAddresses.length - 1];
+        waypoints = routingAddresses.slice(1, -1).map((item) => ({
             location: item,
             stopover: true
         }));
@@ -136,7 +137,7 @@ function initMap() {
             if (status === "OK") {
                 directionsRenderer.setDirections(response);
             } else {
-                console.error("DirectionsStatus:", status, { origin, destination, waypoints, schoolPosition, driverOrigin });
+                console.error("DirectionsStatus:", status, { origin, destination, waypoints, routingAddresses, orderedPoints });
                 let detail = "Revisa que las direcciones incluyan via y numero, junto con ciudad y departamento.";
                 if (status === "REQUEST_DENIED") {
                     detail = "Activa Directions API (Legacy) en Google Cloud para este mismo proyecto/API key, y reinicia el servidor.";

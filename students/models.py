@@ -9,6 +9,7 @@ class Student(models.Model):
         related_name="students",
     )
     full_name = models.CharField(max_length=120)
+    school_name = models.CharField(max_length=150, blank=True, default="")
     address = models.CharField(max_length=255)
     guardian_name = models.CharField(max_length=120)
     guardian_phone = models.CharField(max_length=20)

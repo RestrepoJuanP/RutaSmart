@@ -5,6 +5,7 @@ from django.views.generic import CreateView, ListView
 
 from accounts.models import User
 from conductor.models import Conductor
+from .forms import VehiculoForm
 from .models import Vehiculo
 
 
@@ -50,17 +51,7 @@ class DriverRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
 
 class RegisterVehicleView(DriverRequiredMixin, CreateView):
     model = Vehiculo
-    fields = [
-        "placa",
-        "marca",
-        "linea",
-        "modelo",
-        "color",
-        "num_asientos",
-        "combustible",
-        "transmision",
-        "cilindraje",
-    ]
+    form_class = VehiculoForm
     template_name = "register_vehicle.html"
     success_url = reverse_lazy("vehiculo:list")
 
