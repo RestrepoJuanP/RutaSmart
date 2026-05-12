@@ -3,7 +3,6 @@ from django.db.models import Sum
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
-from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
 from accounts.decorators import role_required
@@ -14,7 +13,7 @@ from .models import ComprobantePago, Gasto
 
 @role_required(User.Role.DRIVER)
 def dashboard(request):
-    comprobantes = ComprobantePago.objects.all()
+    comprobantes = ComprobantePago.objects.filter(conductor=request.user)
     ingresos = (
         comprobantes.filter(estado=ComprobantePago.Estado.APROBADO)
         .aggregate(total=Sum("monto"))["total"]
@@ -38,13 +37,13 @@ def dashboard(request):
 
 @role_required(User.Role.DRIVER)
 def historial(request):
-    comprobantes = ComprobantePago.objects.all()
+    comprobantes = ComprobantePago.objects.filter(conductor=request.user)
     return render(request, "finanzas/historial.html", {"comprobantes": comprobantes})
 
 
 @role_required(User.Role.DRIVER)
 def aprobar_comprobante(request, pk):
-    comprobante = get_object_or_404(ComprobantePago, pk=pk)
+    comprobante = get_object_or_404(ComprobantePago, pk=pk, conductor=request.user)
     if request.method == "POST":
         comprobante.estado = ComprobantePago.Estado.APROBADO
         comprobante.comentario_validacion = request.POST.get("comentario", "").strip() or "Aprobado por el conductor"
@@ -56,7 +55,7 @@ def aprobar_comprobante(request, pk):
 
 @role_required(User.Role.DRIVER)
 def rechazar_comprobante(request, pk):
-    comprobante = get_object_or_404(ComprobantePago, pk=pk)
+    comprobante = get_object_or_404(ComprobantePago, pk=pk, conductor=request.user)
     if request.method == "POST":
         comentario = request.POST.get("comentario", "").strip() or "Comprobante rechazado por el conductor"
         comprobante.estado = ComprobantePago.Estado.RECHAZADO
@@ -98,16 +97,28 @@ def gastos_eliminar(request, pk):
     return render(request, "finanzas/gastos_confirmar_eliminar.html", {"gasto": gasto})
 
 
-@csrf_exempt
 @require_POST
 def recibir_comprobante(request):
     try:
+        conductor = None
+        conductor_id = request.POST.get("conductor_id")
+        if conductor_id:
+            conductor = User.objects.filter(
+                pk=conductor_id, role=User.Role.DRIVER, is_active=True
+            ).first()
+            if conductor is None:
+                return JsonResponse(
+                    {"status": "error", "detail": "conductor_id inválido."},
+                    status=400,
+                )
+
         comprobante = ComprobantePago(
             acudiente_nombre=request.POST.get("acudiente_nombre", ""),
             estudiante_nombre=request.POST.get("estudiante_nombre", ""),
             mes_pago=request.POST.get("mes_pago", ""),
             referencia_factura=request.POST.get("referencia_factura", ""),
             monto=request.POST.get("monto", 0),
+            conductor=conductor,
         )
         if "archivo" in request.FILES:
             comprobante.archivo = request.FILES["archivo"]

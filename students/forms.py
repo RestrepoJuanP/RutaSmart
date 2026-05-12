@@ -2,8 +2,15 @@ from django import forms
 from .models import Student
 
 
-ADDRESS_FORMAT_HELP = "Formato permitido: Via y numero, sector o barrio opcional, Ciudad, Departamento, con Colombia opcional"
-ADDRESS_FORMAT_EXAMPLE = "Ejemplo: Calle 38A # 107-78, Calasanz, Medellin, Antioquia"
+ADDRESS_FORMAT_HELP = (
+    "Campos obligatorios: Vía y número, Ciudad y Departamento. "
+    "Sector o barrio es opcional. 'Colombia' al final es opcional."
+)
+ADDRESS_FORMAT_EXAMPLE = "Ejemplo: Calle 38A # 107-78, Calasanz, Medellín, Antioquia"
+ADDRESS_FORMAT_ERROR = (
+    "La dirección debe incluir como mínimo Vía y número, Ciudad y Departamento, "
+    "separados por comas."
+)
 
 
 def _is_valid_colombia_address(value):
@@ -25,7 +32,7 @@ class StudentForm(forms.ModelForm):
         address = self.cleaned_data["address"].strip()
         if not _is_valid_colombia_address(address):
             raise forms.ValidationError(
-                f"Direccion invalida. {ADDRESS_FORMAT_HELP}. {ADDRESS_FORMAT_EXAMPLE}."
+                f"{ADDRESS_FORMAT_ERROR} {ADDRESS_FORMAT_EXAMPLE}."
             )
         return address
 
@@ -61,5 +68,5 @@ class StudentForm(forms.ModelForm):
             }),
         }
         help_texts = {
-            "address": f"{ADDRESS_FORMAT_HELP}. {ADDRESS_FORMAT_EXAMPLE}.",
+            "address": f"{ADDRESS_FORMAT_HELP} {ADDRESS_FORMAT_EXAMPLE}.",
         }
